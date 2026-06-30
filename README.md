@@ -1,61 +1,69 @@
 # 🛍️ Snitch Fullstack
 
-A full-stack MERN e-commerce application inspired by the Snitch clothing brand. This project allows users to browse products, authenticate securely, and manage products through a modern REST API.
+A full-stack MERN e-commerce application inspired by the Snitch clothing brand. The project provides secure authentication, product management, cloud image uploads, and AI-powered semantic search using Mistral Embeddings and Pinecone.
 
 ---
 
 ## 🚀 Features
 
 ### Authentication
-
-* User Registration
-* User Login (JWT Authentication)
-* Secure HTTP-only Cookies
-* Logout
-* Get Current User
-* Google OAuth Login (In Progress)
+- User Registration
+- User Login (JWT Authentication)
+- Secure HTTP-only Cookies
+- Logout
+- Get Current User
+- Google OAuth Login (Coming Soon)
 
 ### Product Management
+- Create Product
+- Update Product
+- Delete Product
+- Get All Products
+- Get Product by ID
+- Get Products by Category
+- Get Distinct Categories
+- Cloud Image Upload using ImageKit
 
-* Create Product
-* Update Product
-* Delete Product
-* Get All Products
-* Get Product by ID
-* Get Products by Category
-* Get Distinct Categories
-* Image Upload using ImageKit
+### AI Features
+- Product Embedding using Mistral AI Embeddings
+- Vector Storage using Pinecone
+- Automatic Embedding Generation on Product Creation
+- Automatic Embedding Update on Product Modification
+- Automatic Vector Deletion on Product Removal
+- Semantic Product Search (Coming Soon)
 
 ### Security
-
-* JWT Authentication
-* Protected Routes
-* Password Hashing with bcrypt
-* Cookie Parser
-* CORS Configuration
+- JWT Authentication
+- Protected Routes
+- Password Hashing with bcrypt
+- HTTP-only Cookies
+- CORS Configuration
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-
-* React
-* Vite
-* React Router
-* Axios
-* Tailwind CSS
+- React
+- Vite
+- React Router
+- Axios
+- Tailwind CSS
 
 ### Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+- Multer
+- ImageKit
+- Cookie Parser
 
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-* JWT
-* Multer
-* ImageKit
-* Cookie Parser
+### AI Stack
+- LangChain
+- Mistral AI Embeddings
+- Pinecone Vector Database
 
 ---
 
@@ -72,7 +80,6 @@ snitch-fullstack/
 │   │   ├── routes/
 │   │   ├── config/
 │   │   └── app.js
-│   │
 │   ├── package.json
 │   └── .env
 │
@@ -120,6 +127,11 @@ IMAGE_KIT_URL_ENDPOINT=your_url_endpoint
 
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+MISTRAL_API_KEY=your_mistral_api_key
+
+PINECONE_API_KEY=your_pinecone_api_key
+PINECONE_INDEX_NAME=your_pinecone_index_name
 ```
 
 Run the backend:
@@ -144,34 +156,73 @@ npm run dev
 
 ### Authentication
 
-| Method | Endpoint             |
-| ------ | -------------------- |
-| POST   | `/api/auth/register` |
-| POST   | `/api/auth/login`    |
-| GET    | `/api/auth/getMe`    |
-| POST   | `/api/auth/logout`   |
+| Method | Endpoint |
+|--------|----------|
+| POST | `/api/auth/register` |
+| POST | `/api/auth/login` |
+| GET | `/api/auth/getMe` |
+| POST | `/api/auth/logout` |
 
 ---
 
 ### Products
 
-| Method | Endpoint                  |
-| ------ | ------------------------- |
-| POST   | `/api/post`               |
-| GET    | `/api/allpost`            |
-| GET    | `/api/post/:id`           |
-| PUT    | `/api/post/:postId`       |
-| DELETE | `/api/post/:postId`       |
-| GET    | `/api/category/:category` |
-| GET    | `/api/categories`         |
+| Method | Endpoint |
+|--------|----------|
+| POST | `/api/post` |
+| GET | `/api/allpost` |
+| GET | `/api/post/:id` |
+| PUT | `/api/post/:postId` |
+| DELETE | `/api/post/:postId` |
+| GET | `/api/category/:category` |
+| GET | `/api/categories` |
+
+---
+
+## AI Architecture
+
+```text
+Admin Creates Product
+        │
+        ▼
+ Upload Image (ImageKit)
+        │
+        ▼
+ Save Product (MongoDB)
+        │
+        ▼
+ Generate Embedding (Mistral AI)
+        │
+        ▼
+ Store Vector (Pinecone)
+```
+
+### Semantic Search (Coming Soon)
+
+```text
+User Query
+      │
+      ▼
+Generate Query Embedding
+      │
+      ▼
+Pinecone Similarity Search
+      │
+      ▼
+Retrieve Product IDs
+      │
+      ▼
+Fetch Product Details from MongoDB
+      │
+      ▼
+Return Matching Products
+```
 
 ---
 
 ## Image Upload
 
-Images are uploaded using **ImageKit**.
-
-Uploaded images are stored securely in the cloud and their URLs are saved in MongoDB.
+Product images are uploaded to **ImageKit** and their URLs are stored in MongoDB.
 
 ---
 
@@ -184,28 +235,29 @@ Register/Login
 Generate JWT
       │
       ▼
-Store Token in HTTP-only Cookie
+Store HTTP-only Cookie
       │
       ▼
-Protected Routes
+Access Protected Routes
 ```
 
 ---
 
 ## Upcoming Features
 
-* Google Authentication
-* Product Search
-* Product Pagination
-* Product Filtering
-* Wishlist
-* Shopping Cart
-* Orders
-* Razorpay/Stripe Integration
-* Admin Dashboard
-* User Profile Update
-* Forgot Password
-* Product Reviews
+- Semantic Product Search
+- AI Shopping Assistant
+- Product Search & Filtering
+- Product Pagination
+- Wishlist
+- Shopping Cart
+- Orders
+- Stripe/Razorpay Integration
+- Admin Dashboard
+- User Profile
+- Forgot Password
+- Product Reviews
+- Google OAuth Authentication
 
 ---
 
@@ -214,9 +266,3 @@ Protected Routes
 **Sandeep Choudhary**
 
 GitHub: https://github.com/sandeep7348
-
----
-
-## License
-
-This project is created for learning and portfolio purposes.
