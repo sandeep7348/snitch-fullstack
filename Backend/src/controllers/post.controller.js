@@ -1,11 +1,16 @@
 import Post from "../models/post.models.js"
 import {ImageKit} from "@imagekit/nodejs"
 import dotenv from "dotenv";
+dotenv.config();
 import { MistralAIEmbeddings } from "@langchain/mistralai";
 import {Pinecone} from "@pinecone-database/pinecone"
-dotenv.config();
+
+
+console.log("MISTRAL_API_KEY =", process.env.MISTRAL_API_KEY);
+
 const embeddings = new MistralAIEmbeddings({
   model: "mistral-embed",
+  apiKey: process.env.MISTRAL_API_KEY
 });
 const pinecone = new Pinecone({
         apiKey: process.env.PINECONE_API_KEY,
@@ -45,20 +50,21 @@ Price: ₹${price}
 const [vector] = await embeddings.embedDocuments([document]);
    
         const index = pinecone.index(process.env.PINECONE_INDEX_NAME);
-        await index.upsert([
-  {
-    id: post._id.toString(),
-    values: vector,
-    metadata: {
-      title,
-      description,
-      category,
-      price: Number(price),
-    
-      productId: post._id.toString(),
+        await index.upsert({
+  records: [
+    {
+      id: post._id.toString(),
+      values: vector,
+      metadata: {
+        title,
+        description,
+        category,
+        price: Number(price),
+        productId: post._id.toString(),
+      },
     },
-  },
-]);
+  ],
+});
         console.log(req.user.id)
         if(!post)
         {
@@ -226,7 +232,9 @@ export async function deletePost(req, res) {
 
     
     const index = pinecone.index(process.env.PINECONE_INDEX_NAME);
-    await index.deleteOne(postId);
+    await index.deleteOne({
+  id: postId,
+});
 
     
     await Post.findByIdAndDelete(postId);
@@ -292,5 +300,58 @@ export async function getDistinctCategory(req,res){
     return res.status(500).json({
       message:"Internal Server Error"
     })
+  }
+}
+
+export async function searchProduct(req, res) {
+  try {
+    const { query } = req.body;
+
+    if (!query) {
+      return res.status(400).json({
+        message: "Search query is required",
+      });
+    }
+
+    const vector = await embeddings.embedQuery(query);
+
+    const index = pinecone.index(process.env.PINECONE_INDEX_NAME);
+
+    const response = await index.query({
+      vector,
+      topK: 5,
+      includeMetadata: true,
+    });
+
+    if (!response.matches || response.matches.length === 0) {
+      return res.status(404).json({
+        message: "No matching products found",
+      });
+    }
+
+    const productIds = response.matches.map(
+      (match) => match.metadata.productId
+    );
+
+    const products = await Post.find({
+      _id: { $in: productIds },
+    }).populate("addedBy", "fullName email");
+
+    const orderedProducts = productIds.map((id) =>
+      products.find((product) => product._id.toString() === id)
+    );
+
+    return res.status(200).json({
+      message: "Products Found",
+      totalProducts: orderedProducts.length,
+      products: orderedProducts,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
   }
 }

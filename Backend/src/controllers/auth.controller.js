@@ -3,12 +3,8 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.models.js";
 import dotenv from "dotenv";
 import { validationResult } from "express-validator";
-import { useReducer } from "react";
-import { MistralAIEmbeddings } from "@langchain/mistralai";
 
-const embeddings = new MistralAIEmbeddings({
-  model: "mistral-embed", // Default value
-});
+
 
 dotenv.config();
 
@@ -24,7 +20,7 @@ export async function login(req, res) {
         message: "Please provide both email and password",
       });
     }
-
+    
     const user = await User.findOne({ email });
     console.log("Login user lookup result", { email, found: !!user });
     if (!user) {
@@ -32,6 +28,7 @@ export async function login(req, res) {
         message: "No such user exists",
       });
     }
+
 
     const comparePassword = await bcrypt.compare(password, user.password);
     console.log("Password comparison result", { email, validPassword: comparePassword });

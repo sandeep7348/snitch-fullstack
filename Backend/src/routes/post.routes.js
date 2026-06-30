@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import { isAuthenticated } from "../controllers/auth.controller.js";
-import { CreatePost, getAllPost ,getPostById,updatePost,deletePost,getPostByCategory,getDistinctCategory
+import { CreatePost, getAllPost ,getPostById,updatePost,deletePost,getPostByCategory,getDistinctCategory,searchProduct
 } from "../controllers/post.controller.js";
 
 const router = express.Router();
@@ -28,4 +28,5 @@ router.delete(
 );
 router.get("/category/:category", getPostByCategory);
 router.get("/categories", getDistinctCategory);
+router.post("/search", searchProduct);
 export default router;
