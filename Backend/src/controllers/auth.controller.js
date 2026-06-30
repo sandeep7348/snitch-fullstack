@@ -4,6 +4,11 @@ import User from "../models/user.models.js";
 import dotenv from "dotenv";
 import { validationResult } from "express-validator";
 import { useReducer } from "react";
+import { MistralAIEmbeddings } from "@langchain/mistralai";
+
+const embeddings = new MistralAIEmbeddings({
+  model: "mistral-embed", // Default value
+});
 
 dotenv.config();
 
