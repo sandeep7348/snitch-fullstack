@@ -332,7 +332,7 @@ Access Protected APIs
 
 GitHub: https://github.com/sandeep7348
 
-Portfolio: *(Add your deployed portfolio link here once available.)*
+
 
 ---
 
