@@ -26,6 +26,14 @@ const postSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
+      min: 0,
+    },
+
+    stock: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
     },
 
     addedBy: {

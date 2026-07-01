@@ -25,29 +25,30 @@ const imagekit = new ImageKit({
 export async function CreatePost(req,res){
     try{
        
-        const {title,description,category,price,isFeatured}=req.body
+        const { title, description, category, price, stock, isFeatured } = req.body;
         const imageUrl=await imagekit.files.upload({
             file:req.file.buffer.toString("base64"),
             fileName: req.file.originalname,
   folder: "InstaProject",
         })
-        const post= await Post.create({
-            title,
-            description,
-            category,
-            price,
-            isFeatured,
-            image:imageUrl.url,
-            addedBy:req.user.id
-        })
-        const document = `
-Title: ${title}
-Category: ${category}
-Description: ${description}
-Price: ₹${price}
-`;
-
-const [vector] = await embeddings.embedDocuments([document]);
+          const post = await Post.create({
+              title,
+              description,
+              category,
+              price,
+              stock,
+              isFeatured,
+              image: imageUrl.url,
+              addedBy: req.user.id
+          });
+            const document = `
+                Title: ${title}
+                Category: ${category}
+                Description: ${description}
+                Price: ₹${price}
+                Stock: ${stock}
+                `;
+        const [vector] = await embeddings.embedDocuments([document]);
    
         const index = pinecone.index(process.env.PINECONE_INDEX_NAME);
         await index.upsert({
@@ -55,16 +56,17 @@ const [vector] = await embeddings.embedDocuments([document]);
     {
       id: post._id.toString(),
       values: vector,
-      metadata: {
-        title,
-        description,
-        category,
-        price: Number(price),
-        productId: post._id.toString(),
-      },
-    },
-  ],
-});
+              metadata: {
+            title,
+            description,
+            category,
+            price: Number(price),
+            stock: Number(stock),
+            productId: post._id.toString(),
+        },
+          },
+          ],
+          });
         console.log(req.user.id)
         if(!post)
         {
@@ -156,6 +158,7 @@ export async function updatePost(req, res) {
     post.description = req.body.description || post.description;
     post.category = req.body.category || post.category;
     post.price = req.body.price || post.price;
+    post.stock = req.body.stock ?? post.stock;
 
     if (req.body.isFeatured !== undefined) {
       post.isFeatured = req.body.isFeatured;
@@ -174,11 +177,12 @@ export async function updatePost(req, res) {
 
     await post.save();
     const document = `
-Title: ${post.title}
-Category: ${post.category}
-Description: ${post.description}
-Price: ₹${post.price}
-`;
+        Title: ${post.title}
+        Category: ${post.category}
+        Description: ${post.description}
+        Price: ₹${post.price}
+        Stock: ${post.stock}
+        `;
 
 const [vector] = await embeddings.embedDocuments([document]);
 
