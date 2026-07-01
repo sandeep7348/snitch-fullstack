@@ -1,6 +1,6 @@
 # 🛍️ Snitch Fullstack
 
-A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing brand. The project provides secure authentication, product management, cloud image uploads, and **AI-powered semantic product search** using **Mistral AI Embeddings** and **Pinecone Vector Database**.
+A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing brand. The project provides secure authentication, product management, cloud image uploads, **shopping cart functionality**, and **AI-powered semantic product search** using **Mistral AI Embeddings** and **Pinecone Vector Database**.
 
 ---
 
@@ -28,6 +28,19 @@ A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing bra
 - Get Products by Category
 - Get Distinct Categories
 - Cloud Image Upload using ImageKit
+- Product Stock Management
+
+---
+
+## 🛒 Shopping Cart
+
+- Add Product to Cart
+- Get Logged-in User Cart
+- Remove Product from Cart
+- Clear Cart
+- Quantity Management
+- Stock Validation before Adding Products
+- Protected Cart APIs
 
 ---
 
@@ -89,13 +102,26 @@ snitch-fullstack/
 │
 ├── Backend/
 │   ├── src/
-│   │   ├── controllers/
-│   │   ├── middleware/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── config/
-│   │   └── app.js
 │   │
+│   ├── controllers/
+│   │   ├── auth.controller.js
+│   │   ├── post.controller.js
+│   │   └── cart.controller.js
+│   │
+│   ├── middleware/
+│   │
+│   ├── models/
+│   │   ├── user.models.js
+│   │   ├── post.models.js
+│   │   └── cart.models.js
+│   │
+│   ├── routes/
+│   │   ├── auth.routes.js
+│   │   ├── post.routes.js
+│   │   └── cart.routes.js
+│   │
+│   ├── config/
+│   ├── app.js
 │   ├── package.json
 │   └── .env
 │
@@ -200,6 +226,17 @@ npm run dev
 
 ---
 
+## Shopping Cart
+
+| Method | Endpoint |
+|---------|----------|
+| POST | `/api/cart/add` |
+| GET | `/api/cart` |
+| DELETE | `/api/cart/remove/:postId` |
+| DELETE | `/api/cart/clear` |
+
+---
+
 # AI Semantic Search
 
 Every product is converted into a vector embedding using **Mistral AI Embeddings**.
@@ -236,6 +273,38 @@ Admin Creates Product
 
 ---
 
+## Shopping Cart Flow
+
+```text
+User Login
+      │
+      ▼
+Browse Products
+      │
+      ▼
+Click Add to Cart
+      │
+      ▼
+Authenticate User
+      │
+      ▼
+Check Product Availability
+      │
+      ▼
+Validate Stock
+      │
+      ▼
+Create Cart / Update Existing Cart
+      │
+      ▼
+Save Cart in MongoDB
+      │
+      ▼
+Return Updated Cart
+```
+
+---
+
 ## Semantic Search Flow
 
 ```text
@@ -263,7 +332,7 @@ Return Relevant Products
 
 ```json
 {
-    "query": "black oversized cotton t-shirt"
+  "query": "black oversized cotton t-shirt"
 }
 ```
 
@@ -311,17 +380,16 @@ Access Protected APIs
 
 # Upcoming Features
 
+- Order Management
+- Stripe / Razorpay Integration
+- Wishlist
 - AI Shopping Assistant
 - Personalized Product Recommendations
 - Product Filtering & Sorting
 - Pagination
-- Wishlist
-- Shopping Cart
-- Order Management
-- Stripe/Razorpay Integration
+- Product Reviews & Ratings
 - Admin Dashboard
 - User Profile Management
-- Product Reviews & Ratings
 - Google OAuth Authentication
 
 ---
@@ -331,8 +399,6 @@ Access Protected APIs
 **Sandeep Choudhary**
 
 GitHub: https://github.com/sandeep7348
-
-
 
 ---
 
