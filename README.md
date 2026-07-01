@@ -1,20 +1,25 @@
 # 🛍️ Snitch Fullstack
 
-A full-stack MERN e-commerce application inspired by the Snitch clothing brand. The project provides secure authentication, product management, cloud image uploads, and AI-powered semantic search using Mistral Embeddings and Pinecone.
+A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing brand. The project provides secure authentication, product management, cloud image uploads, and **AI-powered semantic product search** using **Mistral AI Embeddings** and **Pinecone Vector Database**.
 
 ---
 
-## 🚀 Features
+# 🚀 Features
 
-### Authentication
+## 🔐 Authentication
+
 - User Registration
 - User Login (JWT Authentication)
 - Secure HTTP-only Cookies
 - Logout
 - Get Current User
-- Google OAuth Login (Coming Soon)
+- Protected Routes
+- Google OAuth (In Progress)
 
-### Product Management
+---
+
+## 📦 Product Management
+
 - Create Product
 - Update Product
 - Delete Product
@@ -24,50 +29,60 @@ A full-stack MERN e-commerce application inspired by the Snitch clothing brand. 
 - Get Distinct Categories
 - Cloud Image Upload using ImageKit
 
-### AI Features
+---
+
+## 🤖 AI Features
+
+- AI-powered Semantic Product Search
 - Product Embedding using Mistral AI Embeddings
 - Vector Storage using Pinecone
-- Automatic Embedding Generation on Product Creation
-- Automatic Embedding Update on Product Modification
-- Automatic Vector Deletion on Product Removal
-- Semantic Product Search (Coming Soon)
+- Automatic Embedding Generation when Product is Created
+- Automatic Embedding Update when Product is Updated
+- Automatic Vector Deletion when Product is Deleted
+- Semantic Similarity Search using Vector Embeddings
 
-### Security
+---
+
+## 🔒 Security
+
 - JWT Authentication
-- Protected Routes
-- Password Hashing with bcrypt
 - HTTP-only Cookies
+- Password Hashing using bcrypt
+- Protected REST APIs
 - CORS Configuration
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠 Tech Stack
 
-### Frontend
+## Frontend
+
 - React
 - Vite
 - React Router
 - Axios
 - Tailwind CSS
 
-### Backend
+## Backend
+
 - Node.js
 - Express.js
 - MongoDB
 - Mongoose
-- JWT
 - Multer
 - ImageKit
+- JWT
 - Cookie Parser
 
-### AI Stack
+## AI Stack
+
 - LangChain
 - Mistral AI Embeddings
 - Pinecone Vector Database
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```text
 snitch-fullstack/
@@ -80,6 +95,7 @@ snitch-fullstack/
 │   │   ├── routes/
 │   │   ├── config/
 │   │   └── app.js
+│   │
 │   ├── package.json
 │   └── .env
 │
@@ -94,25 +110,27 @@ snitch-fullstack/
 
 ---
 
-## 📦 Installation
+# 📦 Installation
 
-### Clone Repository
+## Clone Repository
 
 ```bash
 git clone https://github.com/sandeep7348/snitch-fullstack.git
+
 cd snitch-fullstack
 ```
 
 ---
 
-## Backend Setup
+# Backend Setup
 
 ```bash
 cd Backend
+
 npm install
 ```
 
-Create a `.env` file:
+Create a **.env** file.
 
 ```env
 PORT=3000
@@ -134,7 +152,7 @@ PINECONE_API_KEY=your_pinecone_api_key
 PINECONE_INDEX_NAME=your_pinecone_index_name
 ```
 
-Run the backend:
+Run Backend
 
 ```bash
 npm run dev
@@ -142,22 +160,24 @@ npm run dev
 
 ---
 
-## Frontend Setup
+# Frontend Setup
 
 ```bash
 cd Frontend
+
 npm install
+
 npm run dev
 ```
 
 ---
 
-## REST API
+# REST API
 
-### Authentication
+## Authentication
 
 | Method | Endpoint |
-|--------|----------|
+|---------|----------|
 | POST | `/api/auth/register` |
 | POST | `/api/auth/login` |
 | GET | `/api/auth/getMe` |
@@ -165,10 +185,10 @@ npm run dev
 
 ---
 
-### Products
+## Products
 
 | Method | Endpoint |
-|--------|----------|
+|---------|----------|
 | POST | `/api/post` |
 | GET | `/api/allpost` |
 | GET | `/api/post/:id` |
@@ -176,10 +196,27 @@ npm run dev
 | DELETE | `/api/post/:postId` |
 | GET | `/api/category/:category` |
 | GET | `/api/categories` |
+| POST | `/api/search` |
 
 ---
 
-## AI Architecture
+# AI Semantic Search
+
+Every product is converted into a vector embedding using **Mistral AI Embeddings**.
+
+The embedding is stored in **Pinecone** along with product metadata.
+
+When a user searches for a product:
+
+- The search query is converted into an embedding.
+- Pinecone performs semantic similarity search.
+- Matching product IDs are returned.
+- Complete product details are fetched from MongoDB.
+- Relevant products are returned to the user.
+
+---
+
+## Product Creation Flow
 
 ```text
 Admin Creates Product
@@ -197,36 +234,65 @@ Admin Creates Product
  Store Vector (Pinecone)
 ```
 
-### Semantic Search (Coming Soon)
+---
+
+## Semantic Search Flow
 
 ```text
-User Query
-      │
-      ▼
+User Search Query
+        │
+        ▼
 Generate Query Embedding
-      │
-      ▼
+        │
+        ▼
 Pinecone Similarity Search
-      │
-      ▼
-Retrieve Product IDs
-      │
-      ▼
-Fetch Product Details from MongoDB
-      │
-      ▼
-Return Matching Products
+        │
+        ▼
+Retrieve Matching Product IDs
+        │
+        ▼
+Fetch Products from MongoDB
+        │
+        ▼
+Return Relevant Products
 ```
 
 ---
 
-## Image Upload
+## Example Search Request
 
-Product images are uploaded to **ImageKit** and their URLs are stored in MongoDB.
+```json
+{
+    "query": "black oversized cotton t-shirt"
+}
+```
 
 ---
 
-## Authentication Flow
+## Example Search Queries
+
+- oversized black t-shirt
+- formal white shirt
+- winter hoodie
+- casual streetwear
+- denim jeans
+- cotton summer shirt
+- cargo pants
+- office wear
+- premium men's clothing
+- comfortable everyday clothes
+
+---
+
+# Image Upload
+
+Product images are uploaded to **ImageKit**.
+
+Only the secure image URL is stored in MongoDB.
+
+---
+
+# Authentication Flow
 
 ```text
 Register/Login
@@ -238,31 +304,36 @@ Generate JWT
 Store HTTP-only Cookie
       │
       ▼
-Access Protected Routes
+Access Protected APIs
 ```
 
 ---
 
-## Upcoming Features
+# Upcoming Features
 
-- Semantic Product Search
 - AI Shopping Assistant
-- Product Search & Filtering
-- Product Pagination
+- Personalized Product Recommendations
+- Product Filtering & Sorting
+- Pagination
 - Wishlist
 - Shopping Cart
-- Orders
+- Order Management
 - Stripe/Razorpay Integration
 - Admin Dashboard
-- User Profile
-- Forgot Password
-- Product Reviews
+- User Profile Management
+- Product Reviews & Ratings
 - Google OAuth Authentication
 
 ---
 
-## Author
+# Author
 
 **Sandeep Choudhary**
 
 GitHub: https://github.com/sandeep7348
+
+
+
+---
+
+⭐ If you found this project useful, consider giving it a star on GitHub!
