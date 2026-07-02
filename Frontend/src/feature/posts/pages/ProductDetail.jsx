@@ -3,16 +3,20 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { usePosts } from "../hooks/usePosts";
 import { useCart } from "../../cart/hooks/useCart";
 import { useAuth } from "../../auth/hooks/useAuth";
+import CommentSection from "../../comment/components/CommentSection";
 import styles from "./productDetail.module.scss";
 
-export const ProductDetail = () => {
+const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+
   const loadedIdRef = useRef(null);
+
   const { loadProductById } = usePosts();
   const { handleAddToCart } = useCart();
   const { user } = useAuth();
@@ -21,12 +25,15 @@ export const ProductDetail = () => {
     const loadProduct = async () => {
       setLoading(true);
       setMessage("");
+
       try {
         const data = await loadProductById(id);
         setProduct(data);
         loadedIdRef.current = id;
       } catch (error) {
-        setMessage(error?.response?.data?.message || "Product not found.");
+        setMessage(
+          error?.response?.data?.message || "Product not found."
+        );
       } finally {
         setLoading(false);
       }
@@ -52,8 +59,12 @@ export const ProductDetail = () => {
       <main className={styles.page}>
         <div className={styles.shell}>
           <p className={styles.message}>Product not available.</p>
-          <Link to="/products" className={styles.linkButton}>
-            Back to products
+
+          <Link
+            to="/products"
+            className={styles.linkButton}
+          >
+            Back to Products
           </Link>
         </div>
       </main>
@@ -65,36 +76,68 @@ export const ProductDetail = () => {
       <div className={styles.shell}>
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>{product.category}</p>
+            <p className={styles.eyebrow}>
+              {product.category}
+            </p>
+
             <h1>{product.title}</h1>
           </div>
-          <Link to="/products" className={styles.linkButton}>
-            Back to products
+
+          <Link
+            to="/products"
+            className={styles.linkButton}
+          >
+            Back to Products
           </Link>
         </header>
 
-        {message ? <p className={styles.message}>{message}</p> : null}
+        {message && (
+          <p className={styles.message}>
+            {message}
+          </p>
+        )}
 
         <div className={styles.detailGrid}>
-          <img src={product.image} alt={product.title} className={styles.image} />
+          {product.image && (
+            <img
+              src={product.image}
+              alt={product.title}
+              className={styles.image}
+              onError={(e) => {
+                e.target.style.display = "none";
+              }}
+            />
+          )}
 
           <div className={styles.info}>
-            <p className={styles.description}>{product.description}</p>
+            <p className={styles.description}>
+              {product.description}
+            </p>
+
             <div className={styles.metaRow}>
               <div>
                 <p className={styles.label}>Price</p>
-                <p className={styles.value}>₹{product.price}</p>
+                <p className={styles.value}>
+                  ₹{product.price}
+                </p>
               </div>
+
               <div>
                 <p className={styles.label}>Seller</p>
-                <p className={styles.value}>{product.addedBy?.fullName || product.addedBy?.email || "Unknown"}</p>
+                <p className={styles.value}>
+                  {product.addedBy?.fullName ||
+                    product.addedBy?.email ||
+                    "Unknown"}
+                </p>
               </div>
             </div>
 
             <div className={styles.metaRow}>
               <div>
                 <p className={styles.label}>Category</p>
-                <p className={styles.value}>{product.category}</p>
+                <p className={styles.value}>
+                  {product.category}
+                </p>
               </div>
             </div>
 
@@ -103,39 +146,58 @@ export const ProductDetail = () => {
                 className={styles.primary}
                 onClick={async () => {
                   if (!user) {
-                    navigate("/login", { state: { from: location }, replace: true });
+                    navigate("/login", {
+                      state: { from: location },
+                      replace: true,
+                    });
                     return;
                   }
+
                   try {
                     await handleAddToCart(product._id);
                   } catch (error) {
-                    setMessage(error?.response?.data?.message || "Could not add to cart.");
+                    setMessage(
+                      error?.response?.data?.message ||
+                        "Could not add to cart."
+                    );
                   }
                 }}
               >
-                Add to cart
+                Add to Cart
               </button>
+
               <button
                 className={styles.secondary}
                 onClick={async () => {
                   if (!user) {
-                    navigate("/login", { state: { from: location }, replace: true });
+                    navigate("/login", {
+                      state: { from: location },
+                      replace: true,
+                    });
                     return;
                   }
+
                   try {
                     await handleAddToCart(product._id);
                     navigate("/cart");
                   } catch (error) {
-                    setMessage(error?.response?.data?.message || "Could not add to cart.");
+                    setMessage(
+                      error?.response?.data?.message ||
+                        "Could not add to cart."
+                    );
                   }
                 }}
               >
-                Buy now
+                Buy Now
               </button>
             </div>
           </div>
         </div>
+
+        <CommentSection postId={product._id} />
       </div>
     </main>
   );
 };
+
+export default ProductDetail;
