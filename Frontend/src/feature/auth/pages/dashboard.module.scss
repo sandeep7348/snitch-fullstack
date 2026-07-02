@@ -1,37 +1,21 @@
 .dashboard-page {
   min-height: 100vh;
-  padding: 40px 18px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  background: linear-gradient(180deg, #fdf7ef 0%, #f6e7d1 100%);
+  padding: 0;
+  display: block;
+  background:
+    radial-gradient(circle at top left, rgba(255, 107, 53, 0.18), transparent 24%),
+    linear-gradient(135deg, #090b10 0%, #151924 50%, #1b1f2d 100%);
 }
 
 .shell {
-  width: min(920px, 100%);
-  background: #fff;
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-}
-
-.welcome {
-  color: #334155;
-  margin: 8px 0 18px;
-}
-
-.panel {
-  border-top: 1px solid rgba(15,23,42,0.04);
-  padding-top: 18px;
-}
-
-.panel h2 {
-  margin: 0 0 8px;
-}
-
-.panel ul {
+  width: 100%;
+  max-width: 100%;
   margin: 0;
-  padding-left: 18px;
+  padding: 28px;
+  border-radius: 0;
+  background: #fdf8f2;
+  box-shadow: none;
+  color: #141824;
 }
 
 .header {
@@ -44,7 +28,7 @@
 
 .subtitle {
   margin: 6px 0 0;
-  color: #475569;
+  color: #5b6474;
   font-size: 0.95rem;
 }
 
@@ -55,58 +39,64 @@
 
 .signout {
   background: transparent;
-  border: 1px solid rgba(15,23,42,0.06);
+  border: 1px solid rgba(20, 24, 36, 0.16);
   padding: 8px 14px;
-  border-radius: 10px;
+  border-radius: 999px;
   cursor: pointer;
 }
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 20px;
 }
 
 .statCard {
-  background: linear-gradient(180deg, #ffffff, #fbfbfd);
-  border: 1px solid rgba(15,23,42,0.04);
+  background: linear-gradient(135deg, #fff, #f8efe2);
+  border: 1px solid rgba(20, 24, 36, 0.08);
   padding: 18px;
-  border-radius: 12px;
-  text-align: left;
+  border-radius: 16px;
 }
 
 .statValue {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #111827;
+  color: #161a27;
 }
 
 .statLabel {
   color: #64748b;
-  margin-top: 6px;
+  margin-top: 4px;
+}
+
+.panel {
+  border-top: 1px solid rgba(20, 24, 36, 0.08);
+  padding-top: 18px;
 }
 
 .actionsRow {
   display: flex;
   gap: 12px;
   margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.primary,
+.ghost {
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
 }
 
 .primary {
-  background: linear-gradient(135deg, #5b6cd6, #f97316);
+  background: linear-gradient(135deg, #ff6b35, #5b67f2);
   color: #fff;
   border: none;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
 }
 
 .ghost {
   background: transparent;
-  border: 1px solid rgba(15,23,42,0.06);
-  padding: 10px 16px;
-  border-radius: 10px;
-  cursor: pointer;
+  border: 1px solid rgba(20, 24, 36, 0.16);
 }

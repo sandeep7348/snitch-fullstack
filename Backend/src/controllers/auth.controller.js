@@ -49,8 +49,8 @@ export async function login(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -111,8 +111,8 @@ export async function register(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -133,7 +133,7 @@ export async function register(req, res) {
 export async function isAuthenticated(req,res,next)
 {    
     try{
-    const token=req.cookies.token
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
     if(!token)
     {
       return res.status(401).json({

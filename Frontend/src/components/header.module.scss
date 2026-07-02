@@ -1,0 +1,103 @@
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 28px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.menuButton {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.menuButton span {
+  display: block;
+  height: 3px;
+  background: #111;
+  border-radius: 999px;
+}
+
+.brandRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.brand {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+}
+
+.locationText {
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.link { color: #111; text-decoration: underline; }
+
+.actionRow { display: flex; align-items: center; gap: 12px; }
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  flex: 1;
+  min-width: 260px;
+  background: #f3f4f6;
+  border-radius: 999px;
+}
+
+.searchIcon { font-size: 0.95rem; }
+
+.searchBox input { width: 100%; border: none; background: transparent; outline: none; font-size: 0.95rem; }
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #111;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.cartBadge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  margin-left: 6px;
+  background: #ff6b35;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.logoutButton {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}

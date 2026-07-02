@@ -3,11 +3,20 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import AuthProvider from './feature/auth/auth.context.jsx'
+import PostsProvider from './feature/posts/posts.context.jsx'
+import CartProvider from './feature/cart/cart.context.jsx'
+import OrdersProvider from './feature/orders/orders.context.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <App />
+      <PostsProvider>
+        <CartProvider>
+          <OrdersProvider>
+            <App />
+          </OrdersProvider>
+        </CartProvider>
+      </PostsProvider>
     </AuthProvider>
   </StrictMode>
 )

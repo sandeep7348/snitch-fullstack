@@ -4,6 +4,7 @@ import {
   GetCart,
   RemoveFromCart,
   ClearCart,
+  UpdateCartQuantity
 } from "../controllers/cart.controller.js";
 import {isAuthenticated as IdentifyUser} from "../controllers/auth.controller.js";
 
@@ -12,6 +13,9 @@ const router = express.Router();
 router.post("/add", IdentifyUser, AddToCart);
 
 router.get("/", IdentifyUser, GetCart);
+
+
+router.put("/update/:postId", IdentifyUser, UpdateCartQuantity);
 
 router.delete("/remove/:postId", IdentifyUser, RemoveFromCart);
 

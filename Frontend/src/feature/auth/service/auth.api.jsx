@@ -1,9 +1,14 @@
 import axios from "axios"
 
+const api = axios.create({
+  baseURL: "http://localhost:3000",
+  withCredentials: true,
+})
+
 export async function handleRegister(email, contact, password, fullName) {
     console.log("auth.api.handleRegister request", { email, contact, fullName })
     try {
-        const response = await axios.post("http://localhost:3000/api/auth/register", {
+        const response = await api.post("/api/auth/register", {
             email,
             contact,
             password,
@@ -19,7 +24,7 @@ export async function handleRegister(email, contact, password, fullName) {
 export async function handleLogin(email, password) {
     console.log("auth.api.handleLogin request", { email })
     try{
-        const response=await axios.post("http://localhost:3000/api/auth/login",{
+        const response = await api.post("/api/auth/login",{
             email,
             password
         })

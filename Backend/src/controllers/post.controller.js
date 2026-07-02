@@ -90,7 +90,7 @@ export async function CreatePost(req,res){
 
 export async function getAllPost(req, res) {
   try {
-    const posts = await Post.find()
+    const posts = await Post.find({ stock: { $gte: 1 } })
       .populate("addedBy", "fullName email")
       .sort({ createdAt: -1 });
      console.log(posts)
@@ -198,6 +198,7 @@ await index.upsert([
       description: post.description,
       category: post.category,
       price: Number(post.price),
+      stock: Number(post.stock),
     },
   },
 ]);
@@ -259,7 +260,7 @@ export async function getPostByCategory(req,res){
   try{
 
      const {category}=req.params
-     const posts=await Post.find({category:category}).populate("addedBy","email fullName").sort({createdAt:-1})
+     const posts=await Post.find({category:category, stock: { $gte: 1 }}).populate("addedBy","email fullName").sort({createdAt:-1})
 
      if(posts.length==0)
      {
@@ -284,7 +285,7 @@ export async function getPostByCategory(req,res){
 } 
 export async function getDistinctCategory(req,res){
   try{
-     const categories=await Post.distinct("category")
+     const categories=await Post.distinct("category", { stock: { $gte: 1 } })
      if(categories.length==0)
      {
       return res.status(400).json({
@@ -317,38 +318,64 @@ export async function searchProduct(req, res) {
       });
     }
 
-    const vector = await embeddings.embedQuery(query);
+    // Try vector search first
+    try {
+      const vector = await embeddings.embedQuery(query);
 
-    const index = pinecone.index(process.env.PINECONE_INDEX_NAME);
+      const index = pinecone.index(process.env.PINECONE_INDEX_NAME);
 
-    const response = await index.query({
-      vector,
-      topK: 5,
-      includeMetadata: true,
-    });
-
-    if (!response.matches || response.matches.length === 0) {
-      return res.status(404).json({
-        message: "No matching products found",
+      const response = await index.query({
+        vector,
+        topK: 10,
+        includeMetadata: true,
       });
+
+      if (response.matches && response.matches.length > 0) {
+        const productIds = response.matches.map((match) => match.metadata.productId);
+        const products = await Post.find({ _id: { $in: productIds }, stock: { $gte: 1 } }).populate("addedBy", "fullName email");
+        const orderedProducts = productIds
+          .map((id) => products.find((product) => product._id.toString() === id))
+          .filter(Boolean);
+
+        if (orderedProducts.length > 0) {
+          return res.status(200).json({
+            message: "Products Found",
+            totalProducts: orderedProducts.length,
+            products: orderedProducts,
+          });
+        }
+      }
+      // if no matches or no in-stock vector results, fallthrough to text search
+      console.debug("searchProduct: no vector matches, falling back to text search", { query });
+    } catch (vectorError) {
+      console.error("searchProduct: vector search failed, falling back to text search", vectorError.message || vectorError);
     }
 
-    const productIds = response.matches.map(
-      (match) => match.metadata.productId
-    );
+    // Fallback: MongoDB regex search on title/description/category (case-insensitive)
+    const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+    const fallbackProducts = await Post.find({
+      $and: [
+        { stock: { $gte: 1 } },
+        {
+          $or: [
+            { title: regex },
+            { description: regex },
+            { category: regex },
+          ],
+        },
+      ],
+    })
+      .limit(50)
+      .populate("addedBy", "fullName email");
 
-    const products = await Post.find({
-      _id: { $in: productIds },
-    }).populate("addedBy", "fullName email");
-
-    const orderedProducts = productIds.map((id) =>
-      products.find((product) => product._id.toString() === id)
-    );
+    if (!fallbackProducts || fallbackProducts.length === 0) {
+      return res.status(404).json({ message: "No matching products found" });
+    }
 
     return res.status(200).json({
-      message: "Products Found",
-      totalProducts: orderedProducts.length,
-      products: orderedProducts,
+      message: "Products Found (fallback)",
+      totalProducts: fallbackProducts.length,
+      products: fallbackProducts,
     });
   } catch (error) {
     console.error(error);

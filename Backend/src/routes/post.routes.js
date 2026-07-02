@@ -18,9 +18,9 @@ router.post(
   upload.single("image"),
   CreatePost
 );
-router.get("/allpost",getAllPost)
-router.get('/post/:id',isAuthenticated,getPostById)
-router.put("/post/:postId",isAuthenticated , updatePost);
+router.get("/allpost", getAllPost);
+router.get('/post/:id', getPostById);
+router.put("/post/:postId", isAuthenticated, updatePost);
 router.delete(
   "/post/:postId",
   isAuthenticated,

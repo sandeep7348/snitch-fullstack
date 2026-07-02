@@ -1,5 +1,9 @@
 import app from "./src/app.js";
 import connectToDB from "./src/config/database.js";
+import listEndpoints from "express-list-endpoints";
+
+
+console.log(listEndpoints(app));
 
 console.log("Starting backend server...");
 console.log("Node environment:", process.env.NODE_ENV || "development");
