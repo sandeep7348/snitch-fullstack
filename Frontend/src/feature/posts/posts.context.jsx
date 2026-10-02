@@ -18,30 +18,37 @@ function PostsProvider({ children }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-  const lastFetchRef = useRef({ category: "Discover", search: "", inFlight: false });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const lastFetchRef = useRef({ category: "Discover", search: "", page: 1, inFlight: false });
 
-  const fetchProducts = useCallback(async (category, search) => {
+  const fetchProducts = useCallback(async (category, search, page = 1) => {
     const cat = category ?? "Discover";
     const s = search ?? "";
 
     if (
       lastFetchRef.current.category === cat &&
       lastFetchRef.current.search === s &&
+      lastFetchRef.current.page === page &&
       lastFetchRef.current.inFlight
     ) {
-      console.debug("PostsProvider.fetchProducts: duplicate fetch ignored", { category: cat, search: s });
+      console.debug("PostsProvider.fetchProducts: duplicate fetch ignored", { category: cat, search: s, page });
       return;
     }
 
-    lastFetchRef.current = { category: cat, search: s, inFlight: true };
+    lastFetchRef.current = { category: cat, search: s, page, inFlight: true };
     setLoading(true);
     setMessage("");
 
     try {
-      console.debug("PostsProvider.fetchProducts: starting", { category: cat, search: s });
-      const data = s ? await searchProducts(s) : await getProductsByCategory(cat);
-      console.debug("PostsProvider.fetchProducts: api returned", { length: Array.isArray(data) ? data.length : null });
-      setProducts(data);
+      console.debug("PostsProvider.fetchProducts: starting", { category: cat, search: s, page });
+      const data = s ? await searchProducts(s) : await getProductsByCategory(cat, page);
+      console.debug("PostsProvider.fetchProducts: api returned", { length: Array.isArray(data.posts) ? data.posts.length : null });
+      setProducts(data.posts || []);
+      setCurrentPage(data.currentPage || 1);
+      setTotalPages(data.totalPages || 1);
+      setTotalPosts(data.totalPosts || 0);
     } catch (error) {
       console.error("PostsProvider.fetchProducts: error", error);
       setMessage("Unable to load products right now.");
@@ -96,14 +103,14 @@ function PostsProvider({ children }) {
     if (event?.preventDefault) {
       event.preventDefault();
     }
-    await fetchProducts(selectedCategory, searchTerm);
+    await fetchProducts(selectedCategory, searchTerm, 1);
   };
 
   useEffect(() => {
     const initialize = async () => {
       setLoading(true);
       await fetchCategories();
-      await fetchProducts("Discover", "");
+      await fetchProducts("Discover", "", 1);
       setLoading(false);
     };
 
@@ -126,6 +133,9 @@ function PostsProvider({ children }) {
         handleSearch,
         fetchProducts,
         loadProductById,
+        currentPage,
+        totalPages,
+        totalPosts,
       }}
     >
       {children}

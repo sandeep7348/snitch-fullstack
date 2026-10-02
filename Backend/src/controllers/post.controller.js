@@ -90,13 +90,23 @@ export async function CreatePost(req,res){
 
 export async function getAllPost(req, res) {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const totalPosts = await Post.countDocuments({ stock: { $gte: 1 } });
+    
     const posts = await Post.find({ stock: { $gte: 1 } })
       .populate("addedBy", "fullName email")
-      .sort({ createdAt: -1 });
-     console.log(posts)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
     return res.status(200).json({
       message: "All Posts Fetched Successfully",
-      totalPosts: posts.length,
+      totalPosts,
+      totalPages: Math.ceil(totalPosts / limit),
+      currentPage: page,
       posts,
     });
   } catch (error) {
@@ -258,9 +268,18 @@ export async function deletePost(req, res) {
 }
 export async function getPostByCategory(req,res){
   try{
+     const {category}=req.params;
+     const page = parseInt(req.query.page) || 1;
+     const limit = parseInt(req.query.limit) || 10;
+     const skip = (page - 1) * limit;
 
-     const {category}=req.params
-     const posts=await Post.find({category:category, stock: { $gte: 1 }}).populate("addedBy","email fullName").sort({createdAt:-1})
+     const totalPosts = await Post.countDocuments({category:category, stock: { $gte: 1 }});
+     
+     const posts = await Post.find({category:category, stock: { $gte: 1 }})
+        .populate("addedBy","email fullName")
+        .sort({createdAt:-1})
+        .skip(skip)
+        .limit(limit);
 
      if(posts.length==0)
      {
@@ -270,7 +289,9 @@ export async function getPostByCategory(req,res){
      }
      return res.status(200).json({
       message:"All post based on Category",
-      totalPosts:posts.length,
+      totalPosts,
+      totalPages: Math.ceil(totalPosts / limit),
+      currentPage: page,
       posts
      })
 

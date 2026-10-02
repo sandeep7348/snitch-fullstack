@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "snitch-api": {
+      "command": "node",
+      "args": [
+        "c:\\Users\\8YIN\\OneDrive\\Documents\\Kaggle\\snitch-fullstack\\mcp-server\\index.js"
+      ],
+      "env": {
+        "SNITCH_API_URL": "http://localhost:3000"
+      }
+    }
+  }
+}

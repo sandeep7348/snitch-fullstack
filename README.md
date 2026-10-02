@@ -1,176 +1,172 @@
 # 🛍️ Snitch Fullstack
 
-A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing brand. The project provides secure authentication, product management, cloud image uploads, **shopping cart functionality**, and **AI-powered semantic product search** using **Mistral AI Embeddings** and **Pinecone Vector Database**.
+A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing brand.  
+Built with secure authentication, product management, cloud image uploads, shopping cart, **AI-powered semantic search** (Mistral AI + Pinecone), **server-side pagination**, and an **MCP tool server** for AI-agent integration.
 
 ---
 
-# 🚀 Features
+## 🚀 Features
 
-## 🔐 Authentication
-
-- User Registration
-- User Login (JWT Authentication)
-- Secure HTTP-only Cookies
-- Logout
-- Get Current User
+### 🔐 Authentication
+- User Registration & Login (JWT + HTTP-only Cookies)
+- Logout & Get Current User
 - Protected Routes
-- Google OAuth (In Progress)
 
----
-
-## 📦 Product Management
-
-- Create Product
-- Update Product
-- Delete Product
-- Get All Products
+### 📦 Product Management
+- Create / Update / Delete Products (protected)
+- Get All Products *(paginated)*
 - Get Product by ID
-- Get Products by Category
+- Get Products by Category *(paginated)*
 - Get Distinct Categories
-- Cloud Image Upload using ImageKit
+- Cloud Image Upload via **ImageKit**
 - Product Stock Management
 
----
-
-## 🛒 Shopping Cart
-
-- Add Product to Cart
-- Get Logged-in User Cart
-- Remove Product from Cart
-- Clear Cart
+### 🛒 Shopping Cart
+- Add / Remove Products
 - Quantity Management
-- Stock Validation before Adding Products
+- Stock Validation before Adding
+- Clear Cart
 - Protected Cart APIs
 
----
+### 🔍 Pagination
+- `GET /api/allpost?page=1&limit=10`
+- `GET /api/category/:category?page=1&limit=10`
+- Response includes `totalPosts`, `totalPages`, `currentPage`
+- Frontend Prev / Next controls
 
-## 🤖 AI Features
+### 🤖 AI Features
+- Semantic Product Search using **Mistral AI Embeddings**
+- Vector Storage & Similarity Search via **Pinecone**
+- Automatic Embedding Generation on Product Create / Update
+- Automatic Vector Deletion on Product Delete
+- Regex text-search fallback if vector results are empty
 
-- AI-powered Semantic Product Search
-- Product Embedding using Mistral AI Embeddings
-- Vector Storage using Pinecone
-- Automatic Embedding Generation when Product is Created
-- Automatic Embedding Update when Product is Updated
-- Automatic Vector Deletion when Product is Deleted
-- Semantic Similarity Search using Vector Embeddings
+### 🛠️ MCP Tools (AI Agent Integration)
+An **MCP (Model Context Protocol) server** exposes all backend APIs as structured tools for AI agents (e.g., Antigravity IDE, Claude Desktop, etc.).
 
----
+| Tool | Description |
+|---|---|
+| `auth_register` | Register a new user |
+| `auth_login` | Login and receive session cookie |
+| `auth_get_me` | Get current user profile |
+| `auth_logout` | Logout |
+| `get_all_products` | Paginated product list |
+| `get_product_by_id` | Single product detail |
+| `get_products_by_category` | Paginated by category |
+| `get_categories` | All distinct categories |
+| `search_products` | AI semantic search |
+| `cart_get` | View cart |
+| `cart_add` | Add item to cart |
+| `cart_remove` | Remove item from cart |
+| `cart_clear` | Clear entire cart |
 
-## 🔒 Security
-
-- JWT Authentication
-- HTTP-only Cookies
-- Password Hashing using bcrypt
+### 🔒 Security
+- JWT Authentication with HTTP-only Cookies
+- Password Hashing (bcrypt)
 - Protected REST APIs
 - CORS Configuration
 
 ---
 
-# 🛠 Tech Stack
+## 🛠 Tech Stack
 
-## Frontend
-
-- React
-- Vite
+### Frontend
+- React + Vite
 - React Router
 - Axios
-- Tailwind CSS
+- CSS Modules + SCSS
 
-## Backend
+### Backend
+- Node.js + Express.js
+- MongoDB + Mongoose
+- Multer + ImageKit
+- JWT + Cookie Parser
 
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- Multer
-- ImageKit
-- JWT
-- Cookie Parser
-
-## AI Stack
-
+### AI Stack
 - LangChain
 - Mistral AI Embeddings
 - Pinecone Vector Database
 
+### MCP Server
+- [@modelcontextprotocol/sdk](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
+- Axios
+- Zod (input validation)
+
 ---
 
-# 📂 Project Structure
+## 📂 Project Structure
 
 ```text
 snitch-fullstack/
 │
 ├── Backend/
-│   ├── src/
-│   │
-│   ├── controllers/
-│   │   ├── auth.controller.js
-│   │   ├── post.controller.js
-│   │   └── cart.controller.js
-│   │
-│   ├── middleware/
-│   │
-│   ├── models/
-│   │   ├── user.models.js
-│   │   ├── post.models.js
-│   │   └── cart.models.js
-│   │
-│   ├── routes/
-│   │   ├── auth.routes.js
-│   │   ├── post.routes.js
-│   │   └── cart.routes.js
-│   │
-│   ├── config/
-│   ├── app.js
-│   ├── package.json
-│   └── .env
+│   └── src/
+│       ├── controllers/
+│       │   ├── auth.controller.js
+│       │   ├── post.controller.js     ← pagination added
+│       │   └── cart.controller.js
+│       ├── middleware/
+│       ├── models/
+│       │   ├── user.models.js
+│       │   ├── post.models.js
+│       │   └── cart.models.js
+│       ├── routes/
+│       │   ├── auth.routes.js
+│       │   ├── post.routes.js
+│       │   └── cart.routes.js
+│       └── config/
 │
 ├── Frontend/
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── vite.config.js
+│   └── src/
+│       ├── feature/
+│       │   ├── posts/
+│       │   │   ├── pages/Products.jsx  ← pagination UI
+│       │   │   ├── posts.context.jsx   ← currentPage/totalPages state
+│       │   │   └── service/post.api.jsx
+│       │   ├── cart/
+│       │   └── auth/
+│       └── components/
+│
+├── mcp-server/                         ← NEW
+│   ├── index.js                        ← 13 MCP tools
+│   └── package.json
+│
+├── .agents/
+│   └── mcp_config.json                 ← Antigravity IDE auto-load
 │
 └── README.md
 ```
 
 ---
 
-# 📦 Installation
+## 📦 Installation
 
-## Clone Repository
+### Clone Repository
 
 ```bash
 git clone https://github.com/sandeep7348/snitch-fullstack.git
-
 cd snitch-fullstack
 ```
 
 ---
 
-# Backend Setup
+## 🖥️ Backend Setup
 
 ```bash
 cd Backend
-
 npm install
 ```
 
-Create a **.env** file.
+Create a `.env` file:
 
 ```env
 PORT=3000
-
 MONGODB_URL=your_mongodb_connection_string
-
 JWT_SECRET=your_jwt_secret
 
 IMAGE_KIT_PUBLIC_KEY=your_public_key
 IMAGE_KIT_PRIVATE_KEY=your_private_key
 IMAGE_KIT_URL_ENDPOINT=your_url_endpoint
-
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
 
 MISTRAL_API_KEY=your_mistral_api_key
 
@@ -178,7 +174,7 @@ PINECONE_API_KEY=your_pinecone_api_key
 PINECONE_INDEX_NAME=your_pinecone_index_name
 ```
 
-Run Backend
+Run the backend:
 
 ```bash
 npm run dev
@@ -186,191 +182,137 @@ npm run dev
 
 ---
 
-# Frontend Setup
+## 🌐 Frontend Setup
 
 ```bash
 cd Frontend
-
 npm install
-
 npm run dev
 ```
 
 ---
 
-# REST API
+## 🤖 MCP Server Setup
 
-## Authentication
+```bash
+cd mcp-server
+npm install
+npm start
+```
+
+> The MCP server defaults to `http://localhost:3000`.  
+> To override: `set SNITCH_API_URL=http://your-host:port`
+
+### Auto-load in Antigravity IDE
+
+The `.agents/mcp_config.json` file is automatically discovered by the Antigravity IDE.  
+Restart the IDE after cloning — tools will appear under **... → MCP Servers**.
+
+---
+
+## 🌐 REST API
+
+### Authentication
 
 | Method | Endpoint |
-|---------|----------|
+|--------|----------|
 | POST | `/api/auth/register` |
 | POST | `/api/auth/login` |
-| GET | `/api/auth/getMe` |
+| GET  | `/api/auth/getMe` |
 | POST | `/api/auth/logout` |
 
----
+### Products
 
-## Products
+| Method | Endpoint | Pagination |
+|--------|----------|-----------|
+| POST   | `/api/post` | — |
+| GET    | `/api/allpost` | `?page=1&limit=10` |
+| GET    | `/api/post/:id` | — |
+| PUT    | `/api/post/:postId` | — |
+| DELETE | `/api/post/:postId` | — |
+| GET    | `/api/category/:category` | `?page=1&limit=10` |
+| GET    | `/api/categories` | — |
+| POST   | `/api/search` | — |
 
-| Method | Endpoint |
-|---------|----------|
-| POST | `/api/post` |
-| GET | `/api/allpost` |
-| GET | `/api/post/:id` |
-| PUT | `/api/post/:postId` |
-| DELETE | `/api/post/:postId` |
-| GET | `/api/category/:category` |
-| GET | `/api/categories` |
-| POST | `/api/search` |
-
----
-
-## Shopping Cart
+### Shopping Cart
 
 | Method | Endpoint |
-|---------|----------|
-| POST | `/api/cart/add` |
-| GET | `/api/cart` |
+|--------|----------|
+| POST   | `/api/cart/add` |
+| GET    | `/api/cart` |
 | DELETE | `/api/cart/remove/:postId` |
 | DELETE | `/api/cart/clear` |
 
 ---
 
-# AI Semantic Search
+## 🔍 AI Semantic Search
 
-Every product is converted into a vector embedding using **Mistral AI Embeddings**.
+Every product is converted to a vector embedding using **Mistral AI**.  
+Embeddings are stored in **Pinecone** with product metadata.
 
-The embedding is stored in **Pinecone** along with product metadata.
+**Search Flow:**
 
-When a user searches for a product:
-
-- The search query is converted into an embedding.
-- Pinecone performs semantic similarity search.
-- Matching product IDs are returned.
-- Complete product details are fetched from MongoDB.
-- Relevant products are returned to the user.
-
----
-
-## Product Creation Flow
-
-```text
-Admin Creates Product
-        │
-        ▼
- Upload Image (ImageKit)
-        │
-        ▼
- Save Product (MongoDB)
-        │
-        ▼
- Generate Embedding (Mistral AI)
-        │
-        ▼
- Store Vector (Pinecone)
 ```
-
----
-
-## Shopping Cart Flow
-
-```text
-User Login
-      │
-      ▼
-Browse Products
-      │
-      ▼
-Click Add to Cart
-      │
-      ▼
-Authenticate User
-      │
-      ▼
-Check Product Availability
-      │
-      ▼
-Validate Stock
-      │
-      ▼
-Create Cart / Update Existing Cart
-      │
-      ▼
-Save Cart in MongoDB
-      │
-      ▼
-Return Updated Cart
-```
-
----
-
-## Semantic Search Flow
-
-```text
-User Search Query
-        │
-        ▼
-Generate Query Embedding
-        │
-        ▼
+User Query
+    │
+    ▼
+Generate Query Embedding (Mistral AI)
+    │
+    ▼
 Pinecone Similarity Search
-        │
-        ▼
+    │
+    ▼
 Retrieve Matching Product IDs
-        │
-        ▼
+    │
+    ▼
 Fetch Products from MongoDB
-        │
-        ▼
+    │
+    ▼
 Return Relevant Products
+         ── if no vector results ──▶ Regex text-search fallback
 ```
+
+**Example request:**
+
+```json
+POST /api/search
+{ "query": "black oversized cotton t-shirt" }
+```
+
+**Example queries:**
+- oversized black t-shirt
+- formal white shirt
+- winter hoodie
+- casual streetwear
+- cargo pants
+- premium men's clothing
 
 ---
 
-## Example Search Request
+## 📖 Paginated Response Shape
 
 ```json
 {
-  "query": "black oversized cotton t-shirt"
+  "message": "All Posts Fetched Successfully",
+  "totalPosts": 48,
+  "totalPages": 5,
+  "currentPage": 2,
+  "posts": [ ... ]
 }
 ```
 
 ---
 
-## Example Search Queries
+## 🛡️ Authentication Flow
 
-- oversized black t-shirt
-- formal white shirt
-- winter hoodie
-- casual streetwear
-- denim jeans
-- cotton summer shirt
-- cargo pants
-- office wear
-- premium men's clothing
-- comfortable everyday clothes
-
----
-
-# Image Upload
-
-Product images are uploaded to **ImageKit**.
-
-Only the secure image URL is stored in MongoDB.
-
----
-
-# Authentication Flow
-
-```text
-Register/Login
+```
+Register / Login
       │
       ▼
 Generate JWT
       │
       ▼
-Store HTTP-only Cookie
+Store in HTTP-only Cookie
       │
       ▼
 Access Protected APIs
@@ -378,27 +320,28 @@ Access Protected APIs
 
 ---
 
-# Upcoming Features
+## 🗺️ Upcoming Features
 
-- Order Management
-- Stripe / Razorpay Integration
-- Wishlist
-- AI Shopping Assistant
-- Personalized Product Recommendations
-- Product Filtering & Sorting
-- Pagination
-- Product Reviews & Ratings
-- Admin Dashboard
-- User Profile Management
-- Google OAuth Authentication
+- [ ] Order Management
+- [ ] Stripe / Razorpay Integration
+- [ ] Wishlist
+- [ ] AI Shopping Assistant
+- [ ] Personalized Product Recommendations
+- [ ] Product Filtering & Sorting
+- [ ] Product Reviews & Ratings
+- [ ] Admin Dashboard
+- [ ] User Profile Management
+- [ ] Google OAuth Authentication
+- [ ] Input validation middleware (Zod / express-validator)
+- [ ] Rate limiting
+- [ ] Unit & Integration Tests
 
 ---
 
-# Author
+## 👤 Author
 
-**Sandeep Choudhary**
-
-GitHub: https://github.com/sandeep7348
+**Sandeep Choudhary**  
+GitHub: [github.com/sandeep7348](https://github.com/sandeep7348)
 
 ---
 

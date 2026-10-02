@@ -21,6 +21,8 @@ export const Products = () => {
     handleCategory,
     handleSearch,
     fetchProducts,
+    currentPage,
+    totalPages,
   } = usePosts();
 
   const searchParam = searchParams.get("search") || "";
@@ -174,6 +176,34 @@ export const Products = () => {
                   </article>
                 ))}
               </section>
+            )}
+
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                <button
+                  className={styles.pageButton}
+                  onClick={() => {
+                    fetchProducts(selectedCategory, searchTerm, currentPage - 1);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  disabled={currentPage === 1}
+                >
+                  Prev
+                </button>
+                <span className={styles.pageInfo}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  className={styles.pageButton}
+                  onClick={() => {
+                    fetchProducts(selectedCategory, searchTerm, currentPage + 1);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
             )}
           </div>
         </div>
