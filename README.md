@@ -374,9 +374,9 @@ Access Protected APIs
 - [ ] Product Filtering & Sorting
 - [ ] Product Reviews & Ratings
 - [ ] Admin Dashboard
-- [ ] User Profile Management
+- [x] User Profile Management
 - [ ] Google OAuth Authentication
-- [ ] Input Validation Middleware
+- [x] Input Validation Middleware
 - [ ] Rate Limiting
 - [ ] Unit & Integration Tests
 - [ ] Docker Compose Setup

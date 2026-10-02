@@ -1,5 +1,5 @@
 import { useEffect, useState, createContext } from "react"
-import { handleLogin as apiHandleLogin, handleRegister as apiHandleRegister } from "./service/auth.api"
+import { handleLogin as apiHandleLogin, handleRegister as apiHandleRegister, handleUpdateProfile as apiHandleUpdateProfile } from "./service/auth.api"
 
 export const AuthContext = createContext()
 
@@ -59,9 +59,22 @@ function AuthProvider({ children }) {
     const handleLogout = () => {
         setUser(null)
     }
+    const updateProfile = async (email, contact, fullName) => {
+        setLoading(true)
+        try {
+            const response = await apiHandleUpdateProfile(email, contact, fullName)
+            setUser(response.user)
+            return response
+        } catch (err) {
+            console.error("Profile Update Error:", err)
+            throw err
+        } finally {
+            setLoading(false)
+        }
+    }
     return(
         <AuthContext.Provider value={{
-            user,loading,handleLogin,handleRegister,handleLogout
+            user,loading,handleLogin,handleRegister,handleLogout,updateProfile
         }}>
             {children}
         </AuthContext.Provider>

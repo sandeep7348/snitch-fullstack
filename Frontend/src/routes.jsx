@@ -3,6 +3,7 @@ import { Home } from "./feature/auth/pages/home.jsx"
 import { Register } from "./feature/auth/pages/register.jsx"
 import { Login } from "./feature/auth/pages/login.jsx"
 import { Dashboard } from "./feature/auth/pages/dashboard.jsx"
+import Profile from "./feature/auth/pages/Profile.jsx"
 import RequireAuth from "./feature/auth/RequireAuth.jsx"
 import { Products } from "./feature/posts/pages/Products.jsx"
 import  ProductDetail  from "./feature/posts/pages/ProductDetail.jsx"
@@ -34,6 +35,14 @@ export function AppRoutes() {
           element={
             <RequireAuth>
               <Dashboard />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth>
+              <Profile />
             </RequireAuth>
           }
         />

@@ -11,3 +11,9 @@ export const loginValidation = [
   check("email").isEmail().withMessage("Email must be valid").normalizeEmail(),
   check("password").notEmpty().withMessage("Password is required"),
 ];
+
+export const updateProfileValidation = [
+  check("fullName").optional().isLength({ min: 3 }).withMessage("fullName must be at least 3 characters").trim(),
+  check("contact").optional().matches(/^\d{10}$/).withMessage("Contact must be a 10-digit phone number"),
+  check("email").optional().isEmail().withMessage("Email must be valid").normalizeEmail(),
+];

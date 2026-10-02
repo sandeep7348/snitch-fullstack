@@ -39,3 +39,16 @@ export async function handleLogin(email, password) {
     }
 
 }
+
+export async function handleUpdateProfile(email, contact, fullName) {
+    try {
+        const response = await api.put("/api/auth/updateMe", {
+            email,
+            contact,
+            fullName
+        })
+        return response.data
+    } catch (err) {
+        throw err
+    }
+}

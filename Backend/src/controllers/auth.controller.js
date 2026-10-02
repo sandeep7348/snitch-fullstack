@@ -202,3 +202,41 @@ export async function logOut(req,res){
 
       }
 }
+
+export async function updateUserProfile(req, res) {
+  try {
+    const id = req.user.id;
+    const { fullName, contact, email } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(409).json({ message: "Email already in use by another account" });
+      }
+      user.email = email;
+    }
+
+    if (fullName) user.fullName = fullName;
+    if (contact) user.contact = contact;
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        id: user.id,
+        email: user.email,
+        contact: user.contact,
+        fullName: user.fullName
+      }
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
