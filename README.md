@@ -1,7 +1,7 @@
 # 🛍️ Snitch Fullstack
 
 A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing brand.  
-Built with secure authentication, product management, cloud image uploads, shopping cart, **AI-powered semantic search** (Mistral AI + Pinecone), **server-side pagination**, and an **MCP tool server** for AI-agent integration.
+Built with secure authentication, product management, cloud image uploads, shopping cart, **AI-powered semantic search**, **server-side pagination**, an **AI Shopping Assistant chatbot**, and an **MCP tool server** for AI-agent integration.
 
 ---
 
@@ -23,26 +23,42 @@ Built with secure authentication, product management, cloud image uploads, shopp
 
 ### 🛒 Shopping Cart
 - Add / Remove Products
-- Quantity Management
-- Stock Validation before Adding
+- Quantity Management & Stock Validation
 - Clear Cart
 - Protected Cart APIs
 
-### 🔍 Pagination
+### 📄 Pagination
 - `GET /api/allpost?page=1&limit=10`
 - `GET /api/category/:category?page=1&limit=10`
 - Response includes `totalPosts`, `totalPages`, `currentPage`
 - Frontend Prev / Next controls
 
-### 🤖 AI Features
-- Semantic Product Search using **Mistral AI Embeddings**
+### 🤖 AI Shopping Assistant (Chatbot)
+A floating chat widget powered by **Mistral AI function calling** — available on every page.
+
+**What the bot can do:**
+- 🔍 **Semantic product search** — "Show me black oversized t-shirts"
+- 📂 **Browse by category** — "What hoodies do you have?"
+- 📋 **Product details** — Fetch full info for any product
+- ⚖️ **Compare products** — Side-by-side comparison
+- 👗 **Outfit suggestions** — "Suggest a casual summer outfit"
+- 💬 **Multi-turn conversation** — Remembers context across messages
+
+**Agentic architecture:**
+- Uses **Mistral `mistral-small-latest`** with native function calling
+- 5 backend tools the AI autonomously invokes
+- Agentic loop — AI chains multiple tool calls in a single response
+- Fallback to text search if vector results are empty
+
+### 🔍 AI Semantic Search
+- Product embeddings via **Mistral AI Embeddings**
 - Vector Storage & Similarity Search via **Pinecone**
-- Automatic Embedding Generation on Product Create / Update
-- Automatic Vector Deletion on Product Delete
-- Regex text-search fallback if vector results are empty
+- Auto-embed on product Create / Update
+- Auto-delete vector on product Delete
+- Regex text-search fallback
 
 ### 🛠️ MCP Tools (AI Agent Integration)
-An **MCP (Model Context Protocol) server** exposes all backend APIs as structured tools for AI agents (e.g., Antigravity IDE, Claude Desktop, etc.).
+An **MCP (Model Context Protocol) server** exposes all backend APIs as structured tools for AI agents (Antigravity IDE, Claude Desktop, etc.).
 
 | Tool | Description |
 |---|---|
@@ -57,7 +73,7 @@ An **MCP (Model Context Protocol) server** exposes all backend APIs as structure
 | `search_products` | AI semantic search |
 | `cart_get` | View cart |
 | `cart_add` | Add item to cart |
-| `cart_remove` | Remove item from cart |
+| `cart_remove` | Remove item |
 | `cart_clear` | Clear entire cart |
 
 ### 🔒 Security
@@ -83,14 +99,13 @@ An **MCP (Model Context Protocol) server** exposes all backend APIs as structure
 - JWT + Cookie Parser
 
 ### AI Stack
-- LangChain
-- Mistral AI Embeddings
-- Pinecone Vector Database
+- **Mistral AI** — Embeddings + Chat Completions (function calling)
+- **LangChain** — Embedding integration
+- **Pinecone** — Vector database
 
 ### MCP Server
-- [@modelcontextprotocol/sdk](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
-- Axios
-- Zod (input validation)
+- [`@modelcontextprotocol/sdk`](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
+- Axios + Zod
 
 ---
 
@@ -103,36 +118,44 @@ snitch-fullstack/
 │   └── src/
 │       ├── controllers/
 │       │   ├── auth.controller.js
-│       │   ├── post.controller.js     ← pagination added
-│       │   └── cart.controller.js
-│       ├── middleware/
+│       │   ├── post.controller.js       ← pagination
+│       │   ├── cart.controller.js
+│       │   └── chat.controller.js       ← AI chatbot (NEW)
+│       ├── routes/
+│       │   ├── auth.routes.js
+│       │   ├── post.routes.js
+│       │   ├── cart.routes.js
+│       │   └── chat.routes.js           ← NEW
 │       ├── models/
 │       │   ├── user.models.js
 │       │   ├── post.models.js
 │       │   └── cart.models.js
-│       ├── routes/
-│       │   ├── auth.routes.js
-│       │   ├── post.routes.js
-│       │   └── cart.routes.js
+│       ├── middleware/
 │       └── config/
 │
 ├── Frontend/
 │   └── src/
+│       ├── App.jsx                      ← ChatBot mounted globally
 │       ├── feature/
+│       │   ├── chat/                    ← NEW
+│       │   │   ├── ChatBot.jsx          ← Floating chat UI
+│       │   │   ├── ChatBot.module.scss
+│       │   │   ├── hooks/useChat.js
+│       │   │   └── service/chat.api.js
 │       │   ├── posts/
-│       │   │   ├── pages/Products.jsx  ← pagination UI
-│       │   │   ├── posts.context.jsx   ← currentPage/totalPages state
+│       │   │   ├── pages/Products.jsx   ← pagination UI
+│       │   │   ├── posts.context.jsx
 │       │   │   └── service/post.api.jsx
 │       │   ├── cart/
 │       │   └── auth/
 │       └── components/
 │
-├── mcp-server/                         ← NEW
-│   ├── index.js                        ← 13 MCP tools
+├── mcp-server/
+│   ├── index.js                         ← 13 MCP tools
 │   └── package.json
 │
 ├── .agents/
-│   └── mcp_config.json                 ← Antigravity IDE auto-load
+│   └── mcp_config.json                  ← Antigravity IDE auto-load
 │
 └── README.md
 ```
@@ -140,8 +163,6 @@ snitch-fullstack/
 ---
 
 ## 📦 Installation
-
-### Clone Repository
 
 ```bash
 git clone https://github.com/sandeep7348/snitch-fullstack.git
@@ -174,7 +195,7 @@ PINECONE_API_KEY=your_pinecone_api_key
 PINECONE_INDEX_NAME=your_pinecone_index_name
 ```
 
-Run the backend:
+Run:
 
 ```bash
 npm run dev
@@ -200,17 +221,14 @@ npm install
 npm start
 ```
 
-> The MCP server defaults to `http://localhost:3000`.  
-> To override: `set SNITCH_API_URL=http://your-host:port`
+> Defaults to `http://localhost:3000`.  
+> Override: `set SNITCH_API_URL=http://your-host:port`
 
-### Auto-load in Antigravity IDE
-
-The `.agents/mcp_config.json` file is automatically discovered by the Antigravity IDE.  
-Restart the IDE after cloning — tools will appear under **... → MCP Servers**.
+The `.agents/mcp_config.json` is auto-discovered by Antigravity IDE — restart IDE to activate.
 
 ---
 
-## 🌐 REST API
+## 🌐 REST API Reference
 
 ### Authentication
 
@@ -223,14 +241,14 @@ Restart the IDE after cloning — tools will appear under **... → MCP Servers*
 
 ### Products
 
-| Method | Endpoint | Pagination |
-|--------|----------|-----------|
+| Method | Endpoint | Query Params |
+|--------|----------|-------------|
 | POST   | `/api/post` | — |
-| GET    | `/api/allpost` | `?page=1&limit=10` |
+| GET    | `/api/allpost` | `page`, `limit` |
 | GET    | `/api/post/:id` | — |
 | PUT    | `/api/post/:postId` | — |
 | DELETE | `/api/post/:postId` | — |
-| GET    | `/api/category/:category` | `?page=1&limit=10` |
+| GET    | `/api/category/:category` | `page`, `limit` |
 | GET    | `/api/categories` | — |
 | POST   | `/api/search` | — |
 
@@ -243,49 +261,53 @@ Restart the IDE after cloning — tools will appear under **... → MCP Servers*
 | DELETE | `/api/cart/remove/:postId` |
 | DELETE | `/api/cart/clear` |
 
+### AI Chatbot
+
+| Method | Endpoint | Body |
+|--------|----------|------|
+| POST | `/api/chat` | `{ messages: [{role, content}] }` |
+
 ---
 
-## 🔍 AI Semantic Search
+## 💬 Chatbot Usage
 
-Every product is converted to a vector embedding using **Mistral AI**.  
-Embeddings are stored in **Pinecone** with product metadata.
+The chatbot uses **multi-turn conversation** with an agentic tool-calling loop.
 
-**Search Flow:**
-
-```
-User Query
-    │
-    ▼
-Generate Query Embedding (Mistral AI)
-    │
-    ▼
-Pinecone Similarity Search
-    │
-    ▼
-Retrieve Matching Product IDs
-    │
-    ▼
-Fetch Products from MongoDB
-    │
-    ▼
-Return Relevant Products
-         ── if no vector results ──▶ Regex text-search fallback
-```
-
-**Example request:**
-
+**Request format:**
 ```json
-POST /api/search
-{ "query": "black oversized cotton t-shirt" }
+POST /api/chat
+{
+  "messages": [
+    { "role": "user", "content": "Show me black t-shirts" }
+  ]
+}
 ```
 
-**Example queries:**
-- oversized black t-shirt
-- formal white shirt
-- winter hoodie
-- casual streetwear
-- cargo pants
-- premium men's clothing
+**Response:**
+```json
+{
+  "role": "assistant",
+  "message": "Here are some great black t-shirts from our collection! ..."
+}
+```
+
+**Example prompts:**
+- `"Show me black oversized t-shirts"`
+- `"What categories do you have?"`
+- `"Suggest a casual outfit under ₹2000"`
+- `"Compare [Product A] and [Product B]"`
+- `"What's in stock in the hoodies section?"`
+- `"Best products for office wear"`
+
+**Chatbot tools (backend):**
+
+| Tool | Trigger phrase |
+|---|---|
+| `search_products` | "find", "show me", "search" |
+| `get_products_by_category` | category names |
+| `get_product_details` | "tell me more about..." |
+| `compare_products` | "compare X and Y" |
+| `get_all_categories` | "what types", "what categories" |
 
 ---
 
@@ -299,6 +321,29 @@ POST /api/search
   "currentPage": 2,
   "posts": [ ... ]
 }
+```
+
+---
+
+## 🔍 AI Semantic Search Flow
+
+```
+User Query
+    │
+    ▼
+Generate Embedding (Mistral AI)
+    │
+    ▼
+Pinecone Similarity Search
+    │
+    ▼
+Fetch Products from MongoDB
+    │
+    ▼
+Return Relevant Products
+    │ (if no results)
+    ▼
+Regex Text-Search Fallback
 ```
 
 ---
@@ -323,18 +368,18 @@ Access Protected APIs
 ## 🗺️ Upcoming Features
 
 - [ ] Order Management
-- [ ] Stripe / Razorpay Integration
-- [ ] Wishlist
-- [ ] AI Shopping Assistant
-- [ ] Personalized Product Recommendations
+- [ ] Stripe / Razorpay Payment Integration
+- [ ] Wishlist / Saved Items
+- [ ] Personalized AI Recommendations
 - [ ] Product Filtering & Sorting
 - [ ] Product Reviews & Ratings
 - [ ] Admin Dashboard
 - [ ] User Profile Management
 - [ ] Google OAuth Authentication
-- [ ] Input validation middleware (Zod / express-validator)
-- [ ] Rate limiting
+- [ ] Input Validation Middleware
+- [ ] Rate Limiting
 - [ ] Unit & Integration Tests
+- [ ] Docker Compose Setup
 
 ---
 
