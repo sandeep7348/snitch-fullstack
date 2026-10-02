@@ -1,17 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import SideMenu from "./SideMenu";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../feature/auth/hooks/useAuth";
 import { useCart } from "../feature/cart/hooks/useCart";
 import styles from "./header.module.scss";
 
 export default function Header() {
-  const { user, handleLogout } = useAuth();
+  const { user } = useAuth();
   const { cart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const debounceRef = useRef();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
@@ -21,10 +19,8 @@ export default function Header() {
   }, [location.search]);
 
   useEffect(() => {
-    // debounce navigation when typing in search box
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      console.debug("Header.search debounce navigate", { searchInput });
       if (searchInput && searchInput.trim()) {
         navigate(`/products?search=${encodeURIComponent(searchInput.trim())}`);
       }
@@ -36,63 +32,59 @@ export default function Header() {
   }, [searchInput, navigate]);
 
   return (
-    <>
-      <header className={styles.topBar}>
-        <button className={styles.menuButton} aria-label="Open menu" onClick={() => setIsMenuOpen(true)}>
-          <span />
-          <span />
-          <span />
-        </button>
+    <header className={styles.topBar}>
+      <div className={styles.leftSection}>
+        <Link to="/" className={styles.brand}>Snitch</Link>
+        <nav className={styles.navLinks}>
+          <Link to="/" className={location.pathname === '/' ? styles.active : ''}>Home</Link>
+          <Link to="/products" className={location.pathname.startsWith('/products') ? styles.active : ''}>Shop</Link>
+          <Link to="/categories">Categories</Link>
+          <Link to="/deals">Deals</Link>
+        </nav>
+      </div>
 
-        <div className={styles.brandRow}>
-          <div className={styles.brand}>SNITCH</div>
-          <div className={styles.locationText}>Enter Pincode - <Link to="/" className={styles.link}>to check delivery</Link></div>
-        </div>
-
-        <div className={styles.actionRow}>
+      <div className={styles.rightSection}>
         <form
           className={styles.searchBox}
           onSubmit={(e) => {
             e.preventDefault();
-            console.debug("Header.search submit", { searchInput });
             if (searchInput && searchInput.trim()) {
               navigate(`/products?search=${encodeURIComponent(searchInput.trim())}`);
             } else {
               navigate(`/products`);
             }
           }}
-          role="search"
         >
-          <button type="submit" className={styles.searchIcon} aria-label="Search">🔍</button>
+          <span className={styles.searchIcon}>🔍</span>
           <input
             type="search"
-            placeholder="Search 'POLO T-SHIRTS'"
+            placeholder="Search for products, brands, or categories..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </form>
 
-        {user ? (
-          <>
-            <button className={styles.logoutButton} onClick={() => handleLogout()}>
-              Logout
-            </button>
-            <Link to="/cart" className={styles.iconButton} aria-label="Cart">
-              🛒
-              {cart?.products?.length > 0 ? (
-                <span className={styles.cartBadge}>{cart.products.length}</span>
-              ) : null}
+        <div className={styles.actionRow}>
+          <Link to="/wishlist" className={styles.iconButton} aria-label="Wishlist">❤️</Link>
+          <Link to="/cart" className={styles.iconButton} aria-label="Cart">
+            🛒
+            {cart?.products?.length > 0 && (
+              <span className={styles.cartBadge}>{cart.products.length}</span>
+            )}
+          </Link>
+          
+          {user ? (
+            <Link to="/profile" className={styles.profileButton}>
+              <span className={styles.avatar}>{user.fullName ? user.fullName[0].toUpperCase() : 'U'}</span>
             </Link>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className={styles.iconButton} aria-label="Account">👤</Link>
-            <Link to="/cart" className={styles.iconButton} aria-label="Cart">🛒</Link>
-          </>
-        )}
+          ) : (
+            <div className={styles.authButtons}>
+              <Link to="/login" className={styles.signInButton}>Sign In</Link>
+              <Link to="/register" className={styles.signUpButton}>Sign Up</Link>
+            </div>
+          )}
+        </div>
       </div>
     </header>
-      <SideMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-    </>
   );
 }

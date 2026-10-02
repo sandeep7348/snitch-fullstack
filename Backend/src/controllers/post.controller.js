@@ -93,12 +93,22 @@ export async function getAllPost(req, res) {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-
-    const totalPosts = await Post.countDocuments({ stock: { $gte: 1 } });
+    const sortParam = req.query.sort || "newest";
+    const maxPrice = req.query.maxPrice ? parseInt(req.query.maxPrice) : null;
     
-    const posts = await Post.find({ stock: { $gte: 1 } })
+    let sortObj = { createdAt: -1 };
+    if (sortParam === "price_asc") sortObj = { price: 1 };
+    if (sortParam === "price_desc") sortObj = { price: -1 };
+    if (sortParam === "popular") sortObj = { _id: 1 };
+
+    const query = { stock: { $gte: 1 } };
+    if (maxPrice) query.price = { $lte: maxPrice };
+
+    const totalPosts = await Post.countDocuments(query);
+    
+    const posts = await Post.find(query)
       .populate("addedBy", "fullName email")
-      .sort({ createdAt: -1 })
+      .sort(sortObj)
       .skip(skip)
       .limit(limit);
 
@@ -272,12 +282,22 @@ export async function getPostByCategory(req,res){
      const page = parseInt(req.query.page) || 1;
      const limit = parseInt(req.query.limit) || 10;
      const skip = (page - 1) * limit;
-
-     const totalPosts = await Post.countDocuments({category:category, stock: { $gte: 1 }});
+     const sortParam = req.query.sort || "newest";
+     const maxPrice = req.query.maxPrice ? parseInt(req.query.maxPrice) : null;
      
-     const posts = await Post.find({category:category, stock: { $gte: 1 }})
+     let sortObj = { createdAt: -1 };
+     if (sortParam === "price_asc") sortObj = { price: 1 };
+     if (sortParam === "price_desc") sortObj = { price: -1 };
+     if (sortParam === "popular") sortObj = { _id: 1 };
+
+     const query = { category: category, stock: { $gte: 1 } };
+     if (maxPrice) query.price = { $lte: maxPrice };
+
+     const totalPosts = await Post.countDocuments(query);
+     
+     const posts = await Post.find(query)
         .populate("addedBy","email fullName")
-        .sort({createdAt:-1})
+        .sort(sortObj)
         .skip(skip)
         .limit(limit);
 

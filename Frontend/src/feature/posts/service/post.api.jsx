@@ -5,8 +5,8 @@ const api = axios.create({
   withCredentials: true,
 });
 
-export async function getAllProducts(page = 1, limit = 10) {
-  const response = await api.get(`/api/allpost?page=${page}&limit=${limit}`);
+export async function getAllProducts(page = 1, limit = 10, sort = "newest", maxPrice = 20000) {
+  const response = await api.get(`/api/allpost?page=${page}&limit=${limit}&sort=${sort}&maxPrice=${maxPrice}`);
   return response.data || { posts: [], totalPages: 1, currentPage: 1, totalPosts: 0 };
 }
 
@@ -20,11 +20,11 @@ export async function getCategories() {
   return response.data?.categories || [];
 }
 
-export async function getProductsByCategory(category, page = 1, limit = 10) {
+export async function getProductsByCategory(category, page = 1, limit = 10, sort = "newest", maxPrice = 20000) {
   if (!category || category === "Discover") {
-    return getAllProducts(page, limit);
+    return getAllProducts(page, limit, sort, maxPrice);
   }
-  const response = await api.get(`/api/category/${category}?page=${page}&limit=${limit}`);
+  const response = await api.get(`/api/category/${category}?page=${page}&limit=${limit}&sort=${sort}&maxPrice=${maxPrice}`);
   return response.data || { posts: [], totalPages: 1, currentPage: 1, totalPosts: 0 };
 }
 

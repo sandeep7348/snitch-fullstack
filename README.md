@@ -14,12 +14,17 @@ Built with secure authentication, product management, cloud image uploads, shopp
 
 ### 📦 Product Management
 - Create / Update / Delete Products (protected)
-- Get All Products *(paginated)*
+- Get All Products *(paginated & sorted)*
 - Get Product by ID
-- Get Products by Category *(paginated)*
+- Get Products by Category *(paginated & sorted)*
 - Get Distinct Categories
 - Cloud Image Upload via **ImageKit**
 - Product Stock Management
+- **Price Range & Advanced Sorting filters**
+
+### 🛍️ Wishlist & Orders
+- **Wishlist**: MongoDB-backed persistent wishlist (syncs across devices)
+- **Order Management**: Checkout workflow and Order history tracking
 
 ### 🛒 Shopping Cart
 - Add / Remove Products
@@ -261,6 +266,16 @@ The `.agents/mcp_config.json` is auto-discovered by Antigravity IDE — restart 
 | DELETE | `/api/cart/remove/:postId` |
 | DELETE | `/api/cart/clear` |
 
+### Wishlist & Orders
+
+| Method | Endpoint |
+|--------|----------|
+| GET    | `/api/wishlist` |
+| POST   | `/api/wishlist/toggle` |
+| POST   | `/api/orders` |
+| GET    | `/api/orders` |
+| DELETE | `/api/orders/:id` |
+
 ### AI Chatbot
 
 | Method | Endpoint | Body |
@@ -367,15 +382,15 @@ Access Protected APIs
 
 ## 🗺️ Upcoming Features
 
-- [ ] Order Management
+- [x] Order Management
 - [ ] Stripe / Razorpay Payment Integration
-- [ ] Wishlist / Saved Items
+- [x] Wishlist / Saved Items (MongoDB backend)
 - [ ] Personalized AI Recommendations
-- [ ] Product Filtering & Sorting
+- [x] Product Filtering & Sorting
 - [ ] Product Reviews & Ratings
-- [ ] Admin Dashboard
+- [x] Admin Dashboard
 - [x] User Profile Management
-- [ ] Google OAuth Authentication
+- [x] Google OAuth Authentication
 - [x] Input Validation Middleware
 - [ ] Rate Limiting
 - [ ] Unit & Integration Tests

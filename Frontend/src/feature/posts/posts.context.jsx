@@ -21,29 +21,35 @@ function PostsProvider({ children }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
-  const lastFetchRef = useRef({ category: "Discover", search: "", page: 1, inFlight: false });
+  const [sortOption, setSortOption] = useState("newest");
+  const [maxPrice, setMaxPrice] = useState(20000);
+  const lastFetchRef = useRef({ category: "Discover", search: "", page: 1, sort: "newest", price: 20000, inFlight: false });
 
-  const fetchProducts = useCallback(async (category, search, page = 1) => {
+  const fetchProducts = useCallback(async (category, search, page = 1, sortOverride, maxPriceOverride) => {
     const cat = category ?? "Discover";
     const s = search ?? "";
+    const currentSort = sortOverride || sortOption;
+    const currentMaxPrice = maxPriceOverride ?? maxPrice;
 
     if (
       lastFetchRef.current.category === cat &&
       lastFetchRef.current.search === s &&
       lastFetchRef.current.page === page &&
+      lastFetchRef.current.sort === currentSort &&
+      lastFetchRef.current.price === currentMaxPrice &&
       lastFetchRef.current.inFlight
     ) {
-      console.debug("PostsProvider.fetchProducts: duplicate fetch ignored", { category: cat, search: s, page });
+      console.debug("PostsProvider.fetchProducts: duplicate fetch ignored", { category: cat, search: s, page, sort: currentSort, price: currentMaxPrice });
       return;
     }
 
-    lastFetchRef.current = { category: cat, search: s, page, inFlight: true };
+    lastFetchRef.current = { category: cat, search: s, page, sort: currentSort, price: currentMaxPrice, inFlight: true };
     setLoading(true);
     setMessage("");
 
     try {
-      console.debug("PostsProvider.fetchProducts: starting", { category: cat, search: s, page });
-      const data = s ? await searchProducts(s) : await getProductsByCategory(cat, page);
+      console.debug("PostsProvider.fetchProducts: starting", { category: cat, search: s, page, sort: currentSort, price: currentMaxPrice });
+      const data = s ? await searchProducts(s) : await getProductsByCategory(cat, page, 10, currentSort, currentMaxPrice);
       console.debug("PostsProvider.fetchProducts: api returned", { length: Array.isArray(data.posts) ? data.posts.length : null });
       setProducts(data.posts || []);
       setCurrentPage(data.currentPage || 1);
@@ -56,8 +62,7 @@ function PostsProvider({ children }) {
       lastFetchRef.current.inFlight = false;
       setLoading(false);
     }
-    // no deps: stable function
-  }, []);
+  }, [sortOption, maxPrice]);
 
   const loadProductById = useCallback(async (productId) => {
     setLoading(true);
@@ -96,7 +101,7 @@ function PostsProvider({ children }) {
   const handleCategory = async (category) => {
     setSelectedCategory(category);
     setSearchTerm("");
-    await fetchProducts(category, "");
+    await fetchProducts(category, "", 1, sortOption, maxPrice);
   };
 
   const handleSearch = async (event) => {
@@ -128,6 +133,10 @@ function PostsProvider({ children }) {
         loading,
         message,
         featuredProducts,
+        sortOption,
+        setSortOption,
+        maxPrice,
+        setMaxPrice,
         setSearchTerm,
         handleCategory,
         handleSearch,

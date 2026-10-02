@@ -2,102 +2,184 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 12px 28px;
-  border-bottom: 1px solid #e5e7eb;
-  background: #fff;
+  padding: 16px 40px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 50;
 }
 
-.menuButton {
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 28px;
-  height: 22px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 0;
-}
-
-.menuButton span {
-  display: block;
-  height: 3px;
-  background: #111;
-  border-radius: 999px;
-}
-
-.brandRow {
+.leftSection {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
+  align-items: center;
+  gap: 40px;
 }
 
 .brand {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  letter-spacing: 0.28em;
+  color: var(--text-dark);
+  text-decoration: none;
+  letter-spacing: -0.5px;
 }
 
-.locationText {
-  font-size: 0.85rem;
-  color: #4b5563;
+.navLinks {
+  display: flex;
+  gap: 24px;
+  
+  a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-gray);
+    transition: color 0.2s;
+
+    &:hover, &.active {
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+  }
 }
 
-.link { color: #111; text-decoration: underline; }
-
-.actionRow { display: flex; align-items: center; gap: 12px; }
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
 
 .searchBox {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  flex: 1;
-  min-width: 260px;
-  background: #f3f4f6;
+  background: #f1f5f9;
   border-radius: 999px;
+  padding: 8px 16px;
+  width: 320px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+
+  &:focus-within {
+    border-color: var(--primary-color);
+    background: var(--white);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+  }
+
+  .searchIcon {
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    margin-right: 8px;
+  }
+
+  input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
 }
 
-.searchIcon { font-size: 0.95rem; }
-
-.searchBox input { width: 100%; border: none; background: transparent; outline: none; font-size: 0.95rem; }
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 
 .iconButton {
-  display: inline-flex;
+  position: relative;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  background: #f3f4f6;
-  color: #111;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--text-dark);
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f1f5f9;
+  }
 }
 
 .cartBadge {
-  display: inline-grid;
-  place-items: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 6px;
-  margin-left: 6px;
-  background: #ff6b35;
-  color: #fff;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: var(--primary-color);
+  color: var(--white);
+  font-size: 0.65rem;
+  font-weight: bold;
+  height: 16px;
+  min-width: 16px;
   border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid var(--white);
 }
 
-.logoutButton {
-  background: transparent;
-  border: 1px solid #e5e7eb;
-  padding: 8px 12px;
-  border-radius: 12px;
-  cursor: pointer;
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.signInButton {
+  background: var(--white);
+  color: var(--text-dark);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 24px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  border: 1px solid var(--border-color);
+
+  &:hover {
+    background: #f8fafc;
+  }
+}
+
+.signUpButton {
+  background: var(--primary-color);
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 24px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  border: 1px solid var(--primary-color);
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+.profileButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+  }
 }
