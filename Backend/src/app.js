@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes.js";
 import postRoutes from "./routes/post.routes.js"
 import cartRoutes from "./routes/cart.routes.js"
 import CommentRoutes from "./routes/comment.routes.js"
+import chatRoutes from "./routes/chat.routes.js"
 import passport from "passport"
 import {Strategy as GoogleStrategy} from "passport-google-oauth20"
 
@@ -33,6 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api",postRoutes)
 app.use("/api/comment",CommentRoutes)
+app.use("/api",chatRoutes)
 app.use(passport.initialize())
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
