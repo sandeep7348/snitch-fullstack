@@ -276,6 +276,53 @@ export async function chat(req, res) {
     });
   } catch (error) {
     console.error("Chat error:", error);
+    
+    // DB Fallback if Mistral API fails (Rate Limit, etc.)
+    try {
+      const { messages } = req.body;
+      const lastUserMessage = messages.filter(m => m.role === "user").pop();
+      
+      if (lastUserMessage) {
+        const query = lastUserMessage.content;
+        
+        // Split query into words to match any word
+        const words = query.split(/\s+/).filter(w => w.length > 2);
+        let fallbackProducts = [];
+
+        if (words.length > 0) {
+          const orConditions = words.flatMap(w => {
+            const r = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+            return [{ title: r }, { description: r }, { category: r }];
+          });
+          
+          fallbackProducts = await Post.find({
+            stock: { $gte: 1 },
+            $or: orConditions,
+          }).limit(5);
+        }
+
+        // If no matches (or query was just "hi"), return 5 random/latest products
+        if (fallbackProducts.length === 0) {
+          fallbackProducts = await Post.find({ stock: { $gte: 1 } }).limit(5);
+        }
+
+        let fallbackMessage = "*(AI is currently offline. Showing some products from our database)*\n\n";
+        
+        if (fallbackProducts.length > 0) {
+          fallbackMessage += fallbackProducts.map(p => `**${p.title}** - ₹${p.price}\nCategory: ${p.category}`).join("\n\n");
+        } else {
+          fallbackMessage = "*(AI is currently offline)*\n\nNo products found in the store at the moment.";
+        }
+
+        return res.status(200).json({
+          message: fallbackMessage,
+          role: "assistant",
+        });
+      }
+    } catch (fallbackError) {
+      console.error("Fallback error:", fallbackError);
+    }
+
     return res.status(500).json({ message: "Internal Server Error" });
   }
 }

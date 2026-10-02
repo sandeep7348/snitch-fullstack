@@ -1,10 +1,10 @@
 import express from "express";
 import { getWishlist, toggleWishlist } from "../controllers/wishlist.controller.js";
-import { verifyToken } from "../middleware/auth.middleware.js";
+import { isAuthenticated as IdentifyUser } from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
-router.get("/", verifyToken, getWishlist);
-router.post("/toggle", verifyToken, toggleWishlist);
+router.get("/", IdentifyUser, getWishlist);
+router.post("/toggle", IdentifyUser, toggleWishlist);
 
 export default router;

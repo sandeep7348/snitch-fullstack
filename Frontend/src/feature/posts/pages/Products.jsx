@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { usePosts } from "../hooks/usePosts";
 import { useCart } from "../../cart/hooks/useCart";
-import { useWishlist } from "../../wishlist/wishlist.context";
+import { useWishlist } from "../../wishlist/wishlist.context.jsx";
 import styles from "./products.module.scss";
 
 export const Products = () => {

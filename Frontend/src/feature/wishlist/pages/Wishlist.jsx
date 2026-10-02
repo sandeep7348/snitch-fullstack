@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useWishlist } from "../wishlist.context";
+import { useWishlist } from "../wishlist.context.jsx";
 import { useCart } from "../../cart/hooks/useCart";
 import styles from "./wishlist.module.scss";
 

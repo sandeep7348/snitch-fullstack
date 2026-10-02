@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { usePosts } from "../hooks/usePosts";
 import { useCart } from "../../cart/hooks/useCart";
 import { useAuth } from "../../auth/hooks/useAuth";
-import { useWishlist } from "../../wishlist/wishlist.context";
+import { useWishlist } from "../../wishlist/wishlist.context.jsx";
 import CommentSection from "../../comment/components/CommentSection";
 import styles from "./productDetail.module.scss";
 

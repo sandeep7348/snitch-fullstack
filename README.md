@@ -1,5 +1,7 @@
 # 🛍️ Snitch Fullstack
 
+![App Screenshot](https://ik.imagekit.io/sy9lcox8l/InstaProject)
+
 A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing brand.  
 Built with secure authentication, product management, cloud image uploads, shopping cart, **AI-powered semantic search**, **server-side pagination**, an **AI Shopping Assistant chatbot**, and an **MCP tool server** for AI-agent integration.
 
@@ -53,7 +55,7 @@ A floating chat widget powered by **Mistral AI function calling** — available 
 - Uses **Mistral `mistral-small-latest`** with native function calling
 - 5 backend tools the AI autonomously invokes
 - Agentic loop — AI chains multiple tool calls in a single response
-- Fallback to text search if vector results are empty
+- **High Availability Fallback** — Automatically switches to a smart MongoDB Regex Search if the Mistral API hits a rate limit or goes offline, ensuring users always get product results!
 
 ### 🔍 AI Semantic Search
 - Product embeddings via **Mistral AI Embeddings**
@@ -323,6 +325,8 @@ POST /api/chat
 | `get_product_details` | "tell me more about..." |
 | `compare_products` | "compare X and Y" |
 | `get_all_categories` | "what types", "what categories" |
+
+> 🛡️ **Fail-Safe Mechanism:** If the AI API is rate-limited, the system automatically catches the error and executes a word-based fallback query directly on the MongoDB database to return the 5 most relevant products.
 
 ---
 
