@@ -1,6 +1,6 @@
 # 🛍️ Snitch Fullstack
 
-![App Screenshot](https://ik.imagekit.io/sy9lcox8l/InstaProject)
+![App Screenshot](./screenshot.png)
 
 A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing brand.  
 Built with secure authentication, product management, cloud image uploads, shopping cart, **AI-powered semantic search**, **server-side pagination**, an **AI Shopping Assistant chatbot**, and an **MCP tool server** for AI-agent integration.
