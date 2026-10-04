@@ -1,0 +1,247 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.25s ease;
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 520px;
+  background: #12141d;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  padding: 1.25rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+}
+
+.sparkleIcon {
+  color: var(--accent-pink);
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+  }
+}
+
+.modalBody {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.inputSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inputRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--primary);
+  }
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+
+  strong {
+    color: var(--primary-light);
+    font-size: 1rem;
+  }
+}
+
+.fitGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+}
+
+.fitOptions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+
+  button {
+    padding: 0.6rem 0.5rem;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+
+    &.activeFit {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--primary-light);
+      color: var(--text-main);
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+    }
+  }
+}
+
+.calculateBtn {
+  width: 100%;
+  padding: 0.85rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--accent-pink));
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+
+  &:hover {
+    box-shadow: 0 6px 25px rgba(99, 102, 241, 0.5);
+  }
+}
+
+.resultCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-highlight);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: slideUp 0.3s ease;
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sizeBadge {
+  font-size: 1.1rem;
+  color: var(--text-main);
+
+  strong {
+    font-size: 1.6rem;
+    color: var(--primary-light);
+    font-weight: 800;
+  }
+}
+
+.confidenceTag {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-emerald);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.fitTip {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.measurementsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: 0.8rem;
+
+  span {
+    color: var(--text-muted);
+    display: block;
+  }
+
+  strong {
+    color: var(--text-main);
+  }
+}
+
+.applyBtn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  color: #090a0f;
+  font-weight: 800;
+  font-size: 0.9rem;
+
+  &:hover {
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
+  }
+}

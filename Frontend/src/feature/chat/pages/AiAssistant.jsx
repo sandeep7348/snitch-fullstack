@@ -1,4 +1,15 @@
 import React, { useEffect, useRef } from "react";
+import { 
+  Bot, 
+  Send, 
+  Plus, 
+  RotateCcw, 
+  Sparkles, 
+  ShoppingBag, 
+  MessageSquare,
+  ArrowRight,
+  User
+} from "lucide-react";
 import { useChat } from "../hooks/useChat";
 import { useNavigate } from "react-router-dom";
 import styles from "./aiAssistant.module.scss";
@@ -16,19 +27,14 @@ function renderContent(text) {
   });
 }
 
-function Message({ msg, navigate }) {
+function Message({ msg }) {
   const isUser = msg.role === "user";
-  
-  // Extract product recommendations if present (format: [title](url))
-  // For the UI, we'll assume the LLM might return Markdown links to products
   
   return (
     <div className={`${styles.messageWrapper} ${isUser ? styles.userWrapper : styles.botWrapper}`}>
-      {!isUser && (
-        <div className={styles.botAvatar}>
-          <span>🤖</span>
-        </div>
-      )}
+      <div className={styles.avatar}>
+        {isUser ? <User size={16} /> : <Bot size={16} />}
+      </div>
       <div className={`${styles.messageBubble} ${isUser ? styles.userBubble : styles.botBubble}`}>
         {msg.content.split("\n").map((line, i) => (
           <p key={i} className={styles.messageLine}>
@@ -36,7 +42,7 @@ function Message({ msg, navigate }) {
           </p>
         ))}
         <span className={styles.timestamp}>
-          {msg.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          {msg.timestamp ? msg.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ''}
         </span>
       </div>
     </div>
@@ -46,11 +52,11 @@ function Message({ msg, navigate }) {
 function TypingIndicator() {
   return (
     <div className={`${styles.messageWrapper} ${styles.botWrapper}`}>
-      <div className={styles.botAvatar}>
-        <span>🤖</span>
+      <div className={styles.avatar}>
+        <Bot size={16} />
       </div>
       <div className={`${styles.messageBubble} ${styles.botBubble} ${styles.typingBubble}`}>
-        <div className={styles.typing}>
+        <div className={styles.typingDots}>
           <span />
           <span />
           <span />
@@ -61,10 +67,10 @@ function TypingIndicator() {
 }
 
 const HISTORY = [
-  "Running shoes under 10k",
-  "Best laptops for coding",
-  "Compare iPhone models",
-  "Winter jackets for men"
+  "Black oversized t-shirts under ₹1500",
+  "Casual summer outfit ideas",
+  "Compare cargo pants & denim",
+  "Top rated streetwear jackets"
 ];
 
 export const AiAssistant = () => {
@@ -95,54 +101,76 @@ export const AiAssistant = () => {
     <main className={styles.pageContainer}>
       <div className={styles.layout}>
         
-        {/* Sidebar */}
+        {/* Left Sidebar */}
         <aside className={styles.sidebar}>
-          <div className={styles.sidebarHeader}>
-            <button className={styles.newChatBtn} onClick={clearChat}>
-              <span>+</span> New Chat
-            </button>
-          </div>
+          <button className={styles.newChatBtn} onClick={clearChat}>
+            <Plus size={18} /> New Conversation
+          </button>
 
           <div className={styles.historySection}>
-            <h3>Chat History</h3>
+            <h3>Suggested Prompts</h3>
             <ul className={styles.historyList}>
               {HISTORY.map((item, idx) => (
-                <li key={idx} className={styles.historyItem}>
-                  <span>💬</span> {item}
+                <li key={idx} className={styles.historyItem} onClick={() => sendMessage(item)}>
+                  <MessageSquare size={14} /> {item}
                 </li>
               ))}
             </ul>
           </div>
+
+          <div className={styles.sidebarFooter}>
+            <div className={styles.aiBadge}>
+              <Sparkles size={16} /> Powered by Mistral AI
+            </div>
+          </div>
         </aside>
 
-        {/* Chat Area */}
+        {/* Chat Main Area */}
         <section className={styles.chatArea}>
           <div className={styles.chatHeader}>
-            <h2>AI Shopping Assistant</h2>
-            <p>Ask anything about products, get recommendations, compare items and more!</p>
+            <div className={styles.botTitleGroup}>
+              <div className={styles.botBadgeIcon}>
+                <Bot size={22} />
+              </div>
+              <div>
+                <h2>Snitch AI Styling Agent</h2>
+                <p>Semantic search, outfit coordination & product comparison</p>
+              </div>
+            </div>
+
+            <button className={styles.resetBtn} onClick={clearChat} title="Reset Chat">
+              <RotateCcw size={18} />
+            </button>
           </div>
 
           <div className={styles.messagesContainer}>
             {messages.length === 0 ? (
               <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>🤖</div>
-                <h3>How can I help you shop today?</h3>
-                <div className={styles.suggestions}>
-                  <button onClick={() => sendMessage("Show me best running shoes under 10k")}>
-                    Show me best running shoes under 10k
+                <div className={styles.emptyGlowIcon}>
+                  <Sparkles size={36} />
+                </div>
+                <h3>How can Snitch AI assist your style today?</h3>
+                <p>Ask anything about fit, sizing, matching items, or discovering trending drops.</p>
+
+                <div className={styles.suggestionsGrid}>
+                  <button onClick={() => sendMessage("Show me black oversized t-shirts")}>
+                    👕 Show me black oversized t-shirts
                   </button>
-                  <button onClick={() => sendMessage("Suggest a casual outfit for summer")}>
-                    Suggest a casual outfit for summer
+                  <button onClick={() => sendMessage("Suggest a casual streetwear outfit under ₹3000")}>
+                    🔥 Suggest a casual outfit under ₹3000
                   </button>
-                  <button onClick={() => sendMessage("What are the top rated jackets?")}>
-                    What are the top rated jackets?
+                  <button onClick={() => sendMessage("What hoodies do you have in stock?")}>
+                    🧥 What hoodies do you have in stock?
+                  </button>
+                  <button onClick={() => sendMessage("Compare oversized tees with regular fit tees")}>
+                    ⚖️ Compare oversized vs regular tees
                   </button>
                 </div>
               </div>
             ) : (
               <div className={styles.messageList}>
                 {messages.map((msg) => (
-                  <Message key={msg.id} msg={msg} navigate={navigate} />
+                  <Message key={msg.id} msg={msg} />
                 ))}
                 {loading && <TypingIndicator />}
                 {error && <div className={styles.errorAlert}>{error}</div>}
@@ -155,7 +183,8 @@ export const AiAssistant = () => {
             <div className={styles.inputBox}>
               <textarea
                 ref={inputRef}
-                placeholder="Ask me anything about products..."
+                className={styles.input}
+                placeholder="Ask Snitch AI anything about fashion & products..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -167,7 +196,7 @@ export const AiAssistant = () => {
                 onClick={() => sendMessage()}
                 disabled={loading || !input.trim()}
               >
-                Send <span>🚀</span>
+                Send <Send size={16} />
               </button>
             </div>
           </div>

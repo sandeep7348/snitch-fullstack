@@ -31,6 +31,8 @@ function PostsProvider({ children }) {
     const currentSort = sortOverride || sortOption;
     const currentMaxPrice = maxPriceOverride ?? maxPrice;
 
+    setSelectedCategory(cat);
+
     if (
       lastFetchRef.current.category === cat &&
       lastFetchRef.current.search === s &&

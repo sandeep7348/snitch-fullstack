@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { useEffect } from "react"
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom"
 import { Home } from "./feature/auth/pages/home.jsx"
 import { Register } from "./feature/auth/pages/register.jsx"
 import { Login } from "./feature/auth/pages/login.jsx"
@@ -6,7 +7,7 @@ import { Dashboard } from "./feature/auth/pages/dashboard.jsx"
 import Profile from "./feature/auth/pages/Profile.jsx"
 import RequireAuth from "./feature/auth/RequireAuth.jsx"
 import { Products } from "./feature/posts/pages/Products.jsx"
-import  ProductDetail  from "./feature/posts/pages/ProductDetail.jsx"
+import ProductDetail from "./feature/posts/pages/ProductDetail.jsx"
 import { Cart } from "./feature/cart/pages/Cart.jsx"
 import { Checkout } from "./feature/cart/pages/Checkout.jsx"
 import { Orders } from "./feature/orders/pages/Orders.jsx"
@@ -15,10 +16,22 @@ import { AdminDashboard } from "./feature/admin/pages/AdminDashboard.jsx"
 import { AdminProducts } from "./feature/admin/pages/AdminProducts.jsx"
 import { Wishlist } from "./feature/wishlist/pages/Wishlist.jsx"
 import Header from "./components/Header.jsx"
+import ChatBot from "./feature/chat/ChatBot.jsx"
+
+function ScrollToTop() {
+  const { pathname, search } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname, search]);
+
+  return null;
+}
 
 export function AppRoutes() {
   return (
     <Router>
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -82,6 +95,8 @@ export function AppRoutes() {
           }
         />
       </Routes>
+      <ChatBot />
     </Router>
   )
 }
+

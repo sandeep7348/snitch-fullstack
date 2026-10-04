@@ -3,66 +3,51 @@
 ![App Screenshot](./screenshot.png)
 
 A full-stack **MERN E-Commerce Application** inspired by the Snitch clothing brand.  
-Built with secure authentication, product management, cloud image uploads, shopping cart, **AI-powered semantic search**, **server-side pagination**, an **AI Shopping Assistant chatbot**, and an **MCP tool server** for AI-agent integration.
+Built with secure authentication, product management, cloud image uploads, shopping cart, **AI-powered semantic search**, **server-side pagination**, an **AI Shopping Assistant chatbot & AI Stylist workspace**, **Light Studio White UI**, and an **MCP tool server** for AI-agent integration.
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features & Highlights
+
+### 🎨 Light Studio White Design System
+- **Luxury Aesthetic**: High-contrast, clean Light Studio theme featuring `#ffffff` base canvas, `#f8fafc` porcelain surfaces, and deep slate typography (`#0f172a`).
+- **Glassmorphism Navbar**: Translucent fixed navigation header with real-time category dropdowns, live search, cart counter, and wishlist sync.
+- **Responsive Animations & Modals**: Micro-interactions across Product Cards, Quick View overlays, Wishlist toggles, and Recently Viewed carousels.
+
+### ⚡ Seamless Client-Side Navigation & Stability
+- **Zero-Reload Routing**: Fully synchronized client-side routing across all paths (`/`, `/products`, `/products/:id`, `/ai-assistant`, `/wishlist`, `/cart`, `/checkout`, `/orders`, `/profile`).
+- **React Hooks Compliance**: Guaranteed unconditional hook order execution across all component trees to eliminate client-side blank screens and render crashes.
+- **Scroll Restoration**: Automatic `<ScrollToTop />` router listener ensuring smooth page transitions reset to the top.
 
 ### 🔐 Authentication
 - User Registration & Login (JWT + HTTP-only Cookies)
-- Logout & Get Current User
-- Protected Routes
+- Logout & Get Current User Profile
+- Protected Routes & Admin Access Control
+- Google OAuth Integration
 
-### 📦 Product Management
-- Create / Update / Delete Products (protected)
-- Get All Products *(paginated & sorted)*
-- Get Product by ID
-- Get Products by Category *(paginated & sorted)*
-- Get Distinct Categories
+### 📦 Product Management & Filtering
+- Create / Update / Delete Products (protected admin routes)
+- Get All Products *(paginated & multi-field sorted)*
+- Get Product by ID with mount-safe data fetching
+- Category Navigation with `useSearchParams` URL state sync
 - Cloud Image Upload via **ImageKit**
-- Product Stock Management
-- **Price Range & Advanced Sorting filters**
+- Stock Level Management, Price Range Sliders & Advanced Filter Drawer
 
-### 🛍️ Wishlist & Orders
-- **Wishlist**: MongoDB-backed persistent wishlist (syncs across devices)
-- **Order Management**: Checkout workflow and Order history tracking
+### 🛍️ Wishlist, Cart & Order Tracking
+- **Persistent Wishlist**: MongoDB-backed wishlist syncing across sessions and devices.
+- **Interactive Cart**: Quantity adjustment, stock validation, and coupon engine integration.
+- **Order Management**: Order placement, address input, invoice generator, and interactive stepper tracking.
 
-### 🛒 Shopping Cart
-- Add / Remove Products
-- Quantity Management & Stock Validation
-- Clear Cart
-- Protected Cart APIs
-
-### 📄 Pagination
-- `GET /api/allpost?page=1&limit=10`
-- `GET /api/category/:category?page=1&limit=10`
-- Response includes `totalPosts`, `totalPages`, `currentPage`
-- Frontend Prev / Next controls
-
-### 🤖 AI Shopping Assistant (Chatbot)
-A floating chat widget powered by **Mistral AI function calling** — available on every page.
-
-**What the bot can do:**
-- 🔍 **Semantic product search** — "Show me black oversized t-shirts"
-- 📂 **Browse by category** — "What hoodies do you have?"
-- 📋 **Product details** — Fetch full info for any product
-- ⚖️ **Compare products** — Side-by-side comparison
-- 👗 **Outfit suggestions** — "Suggest a casual summer outfit"
-- 💬 **Multi-turn conversation** — Remembers context across messages
-
-**Agentic architecture:**
-- Uses **Mistral `mistral-small-latest`** with native function calling
-- 5 backend tools the AI autonomously invokes
-- Agentic loop — AI chains multiple tool calls in a single response
-- **High Availability Fallback** — Automatically switches to a smart MongoDB Regex Search if the Mistral API hits a rate limit or goes offline, ensuring users always get product results!
+### 🤖 AI Shopping Assistant & AI Stylist
+- **Floating ChatBot**: High z-index (`99999`) floating assistant widget accessible on every route.
+- **Dedicated AI Stylist Workspace (`/ai-assistant`)**: Full-screen conversational AI workspace with prompt suggestions, outfit pairing, and semantic inventory queries.
+- **Mistral AI Function Calling**: Autonomously executes backend tools to query live database items.
+- **High Availability Database Fallback**: Automatic fail-safe fallback to regex search if AI services experience latency or rate-limiting.
 
 ### 🔍 AI Semantic Search
-- Product embeddings via **Mistral AI Embeddings**
-- Vector Storage & Similarity Search via **Pinecone**
-- Auto-embed on product Create / Update
-- Auto-delete vector on product Delete
-- Regex text-search fallback
+- Vector Embeddings generated via **Mistral AI Embeddings**
+- Fast vector similarity search powered by **Pinecone**
+- Automated vector lifecycle management (syncs vector database on product create/update/delete)
 
 ### 🛠️ MCP Tools (AI Agent Integration)
 An **MCP (Model Context Protocol) server** exposes all backend APIs as structured tools for AI agents (Antigravity IDE, Claude Desktop, etc.).
@@ -86,8 +71,7 @@ An **MCP (Model Context Protocol) server** exposes all backend APIs as structure
 ### 🔒 Security
 - JWT Authentication with HTTP-only Cookies
 - Password Hashing (bcrypt)
-- Protected REST APIs
-- CORS Configuration
+- Protected REST APIs & CORS Configuration
 
 ---
 
@@ -95,20 +79,20 @@ An **MCP (Model Context Protocol) server** exposes all backend APIs as structure
 
 ### Frontend
 - React + Vite
-- React Router
-- Axios
-- CSS Modules + SCSS
+- React Router (DOM)
+- Axios & React Context
+- SCSS Modules + Custom CSS Design System
 
 ### Backend
 - Node.js + Express.js
 - MongoDB + Mongoose
-- Multer + ImageKit
+- Multer + ImageKit SDK
 - JWT + Cookie Parser
 
 ### AI Stack
-- **Mistral AI** — Embeddings + Chat Completions (function calling)
-- **LangChain** — Embedding integration
-- **Pinecone** — Vector database
+- **Mistral AI** — Embeddings & Function-Calling Chat Models (`mistral-small-latest`)
+- **LangChain** — Vector Store & Embedding Wrappers
+- **Pinecone** — Cloud Vector Database
 
 ### MCP Server
 - [`@modelcontextprotocol/sdk`](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
@@ -125,14 +109,14 @@ snitch-fullstack/
 │   └── src/
 │       ├── controllers/
 │       │   ├── auth.controller.js
-│       │   ├── post.controller.js       ← pagination
+│       │   ├── post.controller.js       ← pagination & catalog APIs
 │       │   ├── cart.controller.js
-│       │   └── chat.controller.js       ← AI chatbot (NEW)
+│       │   └── chat.controller.js       ← AI chatbot & tool caller
 │       ├── routes/
 │       │   ├── auth.routes.js
 │       │   ├── post.routes.js
 │       │   ├── cart.routes.js
-│       │   └── chat.routes.js           ← NEW
+│       │   └── chat.routes.js
 │       ├── models/
 │       │   ├── user.models.js
 │       │   ├── post.models.js
@@ -142,20 +126,25 @@ snitch-fullstack/
 │
 ├── Frontend/
 │   └── src/
-│       ├── App.jsx                      ← ChatBot mounted globally
+│       ├── App.jsx                      ← Global providers & Floating ChatBot
 │       ├── feature/
-│       │   ├── chat/                    ← NEW
-│       │   │   ├── ChatBot.jsx          ← Floating chat UI
+│       │   ├── chat/
+│       │   │   ├── ChatBot.jsx          ← High-z-index floating assistant
 │       │   │   ├── ChatBot.module.scss
+│       │   │   ├── pages/AiAssistant.jsx← Dedicated AI Stylist workspace
 │       │   │   ├── hooks/useChat.js
 │       │   │   └── service/chat.api.js
 │       │   ├── posts/
-│       │   │   ├── pages/Products.jsx   ← pagination UI
+│       │   │   ├── pages/Products.jsx   ← Filters, pagination & category sync
+│       │   │   ├── pages/ProductDetail.jsx
 │       │   │   ├── posts.context.jsx
 │       │   │   └── service/post.api.jsx
 │       │   ├── cart/
 │       │   └── auth/
 │       └── components/
+│           ├── Header.jsx               ← Glassmorphism luxury header
+│           ├── ScrollToTop.jsx          ← Automatic route scroll reset
+│           └── RecentlyViewedCarousel.jsx
 │
 ├── mcp-server/
 │   ├── index.js                         ← 13 MCP tools
@@ -169,24 +158,21 @@ snitch-fullstack/
 
 ---
 
-## 📦 Installation
+## 📦 Installation & Setup
 
+### 1. Clone Repository
 ```bash
 git clone https://github.com/sandeep7348/snitch-fullstack.git
 cd snitch-fullstack
 ```
 
----
-
-## 🖥️ Backend Setup
-
+### 2. Backend Setup
 ```bash
 cd Backend
 npm install
 ```
 
-Create a `.env` file:
-
+Create a `.env` file in `Backend/`:
 ```env
 PORT=3000
 MONGODB_URL=your_mongodb_connection_string
@@ -202,203 +188,88 @@ PINECONE_API_KEY=your_pinecone_api_key
 PINECONE_INDEX_NAME=your_pinecone_index_name
 ```
 
-Run:
-
+Start dev server:
 ```bash
 npm run dev
 ```
 
----
-
-## 🌐 Frontend Setup
-
+### 3. Frontend Setup
 ```bash
 cd Frontend
 npm install
 npm run dev
 ```
 
----
-
-## 🤖 MCP Server Setup
-
+### 4. MCP Server Setup
 ```bash
 cd mcp-server
 npm install
 npm start
 ```
 
-> Defaults to `http://localhost:3000`.  
-> Override: `set SNITCH_API_URL=http://your-host:port`
-
-The `.agents/mcp_config.json` is auto-discovered by Antigravity IDE — restart IDE to activate.
-
 ---
 
 ## 🌐 REST API Reference
 
 ### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register new user account |
+| POST | `/api/auth/login` | Authenticate user & issue session cookie |
+| GET  | `/api/auth/getMe` | Fetch current user session |
+| POST | `/api/auth/logout` | Clear user session cookie |
 
-| Method | Endpoint |
-|--------|----------|
-| POST | `/api/auth/register` |
-| POST | `/api/auth/login` |
-| GET  | `/api/auth/getMe` |
-| POST | `/api/auth/logout` |
-
-### Products
-
+### Products & Catalog
 | Method | Endpoint | Query Params |
 |--------|----------|-------------|
-| POST   | `/api/post` | — |
-| GET    | `/api/allpost` | `page`, `limit` |
+| POST   | `/api/post` | — (Admin create product) |
+| GET    | `/api/allpost` | `page`, `limit`, `sort`, `search` |
 | GET    | `/api/post/:id` | — |
 | PUT    | `/api/post/:postId` | — |
 | DELETE | `/api/post/:postId` | — |
 | GET    | `/api/category/:category` | `page`, `limit` |
-| GET    | `/api/categories` | — |
-| POST   | `/api/search` | — |
+| GET    | `/api/categories` | — (Distinct categories list) |
+| POST   | `/api/search` | — (AI Semantic search query) |
 
-### Shopping Cart
+### Shopping Cart & Wishlist
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET    | `/api/cart` | View current user cart |
+| POST   | `/api/cart/add` | Add product to cart |
+| DELETE | `/api/cart/remove/:postId` | Remove single item |
+| DELETE | `/api/cart/clear` | Empty cart |
+| GET    | `/api/wishlist` | Fetch wishlist items |
+| POST   | `/api/wishlist/toggle` | Toggle item in wishlist |
 
-| Method | Endpoint |
-|--------|----------|
-| POST   | `/api/cart/add` |
-| GET    | `/api/cart` |
-| DELETE | `/api/cart/remove/:postId` |
-| DELETE | `/api/cart/clear` |
-
-### Wishlist & Orders
-
-| Method | Endpoint |
-|--------|----------|
-| GET    | `/api/wishlist` |
-| POST   | `/api/wishlist/toggle` |
-| POST   | `/api/orders` |
-| GET    | `/api/orders` |
-| DELETE | `/api/orders/:id` |
+### Orders
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST   | `/api/orders` | Place new order |
+| GET    | `/api/orders` | Fetch user order history |
+| DELETE | `/api/orders/:id` | Cancel order |
 
 ### AI Chatbot
-
 | Method | Endpoint | Body |
 |--------|----------|------|
 | POST | `/api/chat` | `{ messages: [{role, content}] }` |
 
 ---
 
-## 💬 Chatbot Usage
+## 🗺️ Completed & Upcoming Roadmap
 
-The chatbot uses **multi-turn conversation** with an agentic tool-calling loop.
-
-**Request format:**
-```json
-POST /api/chat
-{
-  "messages": [
-    { "role": "user", "content": "Show me black t-shirts" }
-  ]
-}
-```
-
-**Response:**
-```json
-{
-  "role": "assistant",
-  "message": "Here are some great black t-shirts from our collection! ..."
-}
-```
-
-**Example prompts:**
-- `"Show me black oversized t-shirts"`
-- `"What categories do you have?"`
-- `"Suggest a casual outfit under ₹2000"`
-- `"Compare [Product A] and [Product B]"`
-- `"What's in stock in the hoodies section?"`
-- `"Best products for office wear"`
-
-**Chatbot tools (backend):**
-
-| Tool | Trigger phrase |
-|---|---|
-| `search_products` | "find", "show me", "search" |
-| `get_products_by_category` | category names |
-| `get_product_details` | "tell me more about..." |
-| `compare_products` | "compare X and Y" |
-| `get_all_categories` | "what types", "what categories" |
-
-> 🛡️ **Fail-Safe Mechanism:** If the AI API is rate-limited, the system automatically catches the error and executes a word-based fallback query directly on the MongoDB database to return the 5 most relevant products.
-
----
-
-## 📖 Paginated Response Shape
-
-```json
-{
-  "message": "All Posts Fetched Successfully",
-  "totalPosts": 48,
-  "totalPages": 5,
-  "currentPage": 2,
-  "posts": [ ... ]
-}
-```
-
----
-
-## 🔍 AI Semantic Search Flow
-
-```
-User Query
-    │
-    ▼
-Generate Embedding (Mistral AI)
-    │
-    ▼
-Pinecone Similarity Search
-    │
-    ▼
-Fetch Products from MongoDB
-    │
-    ▼
-Return Relevant Products
-    │ (if no results)
-    ▼
-Regex Text-Search Fallback
-```
-
----
-
-## 🛡️ Authentication Flow
-
-```
-Register / Login
-      │
-      ▼
-Generate JWT
-      │
-      ▼
-Store in HTTP-only Cookie
-      │
-      ▼
-Access Protected APIs
-```
-
----
-
-## 🗺️ Upcoming Features
-
-- [x] Order Management
-- [ ] Stripe / Razorpay Payment Integration
-- [x] Wishlist / Saved Items (MongoDB backend)
-- [ ] Personalized AI Recommendations
-- [x] Product Filtering & Sorting
-- [ ] Product Reviews & Ratings
-- [x] Admin Dashboard
-- [x] User Profile Management
-- [x] Google OAuth Authentication
-- [x] Input Validation Middleware
-- [ ] Rate Limiting
-- [ ] Unit & Integration Tests
-- [ ] Docker Compose Setup
+- [x] Luxury Light Studio White Theme Redesign
+- [x] Client-Side Navigation Stability & Blank Screen Fixes
+- [x] Floating ChatBot Widget & AI Stylist Workspace (`/ai-assistant`)
+- [x] MongoDB Persistent Wishlist Sync
+- [x] Order Management & Stepper Tracking
+- [x] Product Reviews & Ratings Component
+- [x] Recently Viewed Items Carousel
+- [x] Product Stock Validation & Filters
+- [x] Google OAuth Integration
+- [x] MCP Server Tools Setup
+- [ ] Stripe / Razorpay Payment Gateway Integration
+- [ ] Rate Limiting & API Throttling
+- [ ] Docker & Docker Compose Setup
 
 ---
 

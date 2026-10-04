@@ -152,6 +152,19 @@ export async function isAuthenticated(req,res,next)
   }
 }
 
+export async function optionalAuth(req, res, next) {
+  try {
+    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
+    }
+  } catch (error) {
+    // Ignore invalid token for guest access
+  }
+  next();
+}
+
 export async function getUserDetails(req,res){
      try{
       const id=req.user.id

@@ -1,5 +1,20 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { 
+  Filter, 
+  ShoppingBag, 
+  Heart, 
+  ChevronRight, 
+  SlidersHorizontal,
+  Star,
+  Sparkles,
+  ArrowUpDown,
+  Search,
+  Check,
+  Eye
+} from "lucide-react";
+import ProductQuickViewModal from "../../../components/ProductQuickViewModal";
+import RecentlyViewedCarousel from "../../../components/RecentlyViewedCarousel";
 import { usePosts } from "../hooks/usePosts";
 import { useCart } from "../../cart/hooks/useCart";
 import { useWishlist } from "../../wishlist/wishlist.context.jsx";
@@ -32,21 +47,16 @@ export const Products = () => {
   const { handleAddToCart, message: cartMessage } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   
-  // UI states for sidebar (local state for smooth sliding)
   const [localPriceRange, setLocalPriceRange] = useState(maxPrice || 20000);
+  const [addedItems, setAddedItems] = useState({});
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
 
   useEffect(() => {
-    if (categoryParam && categoryParam !== selectedCategory) {
-      handleCategory(categoryParam);
-    }
-  }, [categoryParam, handleCategory, selectedCategory]);
-
-  useEffect(() => {
-    if (searchParam) {
-      setSearchTerm(searchParam);
-      fetchProducts(selectedCategory, searchParam);
-    }
-  }, [searchParam, fetchProducts, setSearchTerm]);
+    const cat = categoryParam || "Discover";
+    const s = searchParam || "";
+    setSearchTerm(s);
+    fetchProducts(cat, s, 1, sortOption, maxPrice);
+  }, [categoryParam, searchParam]);
 
   const handleCategorySelection = async (category) => {
     const normalizedCategory = category === "ALL" ? "Discover" : category;
@@ -65,18 +75,34 @@ export const Products = () => {
     fetchProducts(selectedCategory, searchTerm, 1, sortOption, localPriceRange);
   };
 
-  const activeProductCount = products.length;
+  const onAddToCart = async (productId) => {
+    await handleAddToCart(productId);
+    setAddedItems(prev => ({ ...prev, [productId]: true }));
+    setTimeout(() => {
+      setAddedItems(prev => ({ ...prev, [productId]: false }));
+    }, 2000);
+  };
 
   return (
     <main className={styles.pageContainer}>
+      {/* Breadcrumb Header */}
       <div className={styles.breadcrumbs}>
-        <Link to="/">Home</Link> &gt; <span>Shop</span> &gt; <span>{selectedCategory === "Discover" ? "All Categories" : selectedCategory}</span>
+        <Link to="/">Home</Link>
+        <ChevronRight size={14} />
+        <Link to="/products">Shop</Link>
+        <ChevronRight size={14} />
+        <span>{selectedCategory === "Discover" ? "All Streetwear" : selectedCategory}</span>
       </div>
 
       <div className={styles.shopLayout}>
+        {/* Sidebar Filters */}
         <aside className={styles.sidebar}>
+          <div className={styles.sidebarHeader}>
+            <h3><SlidersHorizontal size={18} /> Filters</h3>
+          </div>
+
           <div className={styles.sidebarSection}>
-            <h3>Categories</h3>
+            <h4>Categories</h4>
             <ul className={styles.categoryList}>
               <li 
                 className={selectedCategory === "Discover" ? styles.activeCategory : ""}
@@ -97,11 +123,11 @@ export const Products = () => {
           </div>
 
           <div className={styles.sidebarSection}>
-            <h3>Price Range</h3>
-            <div className={styles.priceSlider}>
+            <h4>Max Price</h4>
+            <div className={styles.priceSliderBox}>
               <input 
                 type="range" 
-                min="0" 
+                min="500" 
                 max="20000" 
                 step="500"
                 value={localPriceRange}
@@ -110,30 +136,27 @@ export const Products = () => {
                 onTouchEnd={handlePriceApply}
               />
               <div className={styles.priceLabels}>
-                <span>₹0</span>
-                <span>₹{localPriceRange}</span>
+                <span>₹500</span>
+                <strong>₹{localPriceRange}</strong>
               </div>
-            </div>
-          </div>
-
-          <div className={styles.sidebarSection}>
-            <h3>Brand</h3>
-            <div className={styles.checkboxList}>
-              <label><input type="checkbox" defaultChecked /> Nike</label>
-              <label><input type="checkbox" /> Adidas</label>
-              <label><input type="checkbox" /> Puma</label>
-              <label><input type="checkbox" /> Levi's</label>
             </div>
           </div>
         </aside>
 
+        {/* Main Content Area */}
         <section className={styles.mainContent}>
           <div className={styles.catalogHeader}>
             <div>
-              <h1 className={styles.pageTitle}>{selectedCategory === "Discover" ? "All Products" : selectedCategory}</h1>
-              <p className={styles.resultCount}>Showing 1-{activeProductCount} results</p>
+              <h1 className={styles.pageTitle}>
+                {selectedCategory === "Discover" ? "All Streetwear Drops" : selectedCategory}
+              </h1>
+              <p className={styles.resultCount}>
+                Showing <strong>{products.length}</strong> products
+              </p>
             </div>
+
             <div className={styles.sortControls}>
+              <ArrowUpDown size={16} />
               <label>Sort by:</label>
               <select value={sortOption} onChange={handleSortChange}>
                 <option value="popular">Popularity</option>
@@ -144,12 +167,21 @@ export const Products = () => {
             </div>
           </div>
 
-          {message || cartMessage ? <div className={styles.alertMessage}>{message || cartMessage}</div> : null}
+          {(message || cartMessage) && (
+            <div className={styles.alertBanner}>{message || cartMessage}</div>
+          )}
 
           {loading && !products.length ? (
-            <div className={styles.loadingState}>Loading products...</div>
+            <div className={styles.loadingState}>
+              <Sparkles size={24} className={styles.spinner} />
+              <span>Loading latest collections...</span>
+            </div>
           ) : !products.length ? (
-            <div className={styles.emptyState}>No products found matching your criteria.</div>
+            <div className={styles.emptyState}>
+              <h3>No products found matching your search.</h3>
+              <p>Try resetting filters or searching for something else!</p>
+              <button onClick={() => handleCategorySelection("ALL")}>Reset Filters</button>
+            </div>
           ) : (
             <div className={styles.productGrid}>
               {products.map((product) => (
@@ -159,29 +191,60 @@ export const Products = () => {
                     <button 
                       className={styles.wishlistBtn} 
                       onClick={() => toggleWishlist(product)}
-                      title="Toggle Wishlist"
-                      style={{ color: isInWishlist(product._id) ? '#ef4444' : 'var(--text-gray)' }}
+                      aria-label="Wishlist toggle"
                     >
-                      {isInWishlist(product._id) ? '❤️' : '🤍'}
+                      <span style={{ color: isInWishlist(product._id) ? '#ef4444' : '#ffffff' }}>
+                        {isInWishlist(product._id) ? '❤️' : '🤍'}
+                      </span>
                     </button>
-                  </div>
-                  <div className={styles.productInfo}>
-                    <h3 onClick={() => navigate(`/products/${product._id}`)}>{product.title}</h3>
-                    <div className={styles.priceRow}>
-                      <span className={styles.price}>₹{product.price}</span>
-                      <span className={styles.originalPrice}>₹{Math.floor(product.price * 1.3)}</span>
-                    </div>
-                    <div className={styles.ratingRow}>
-                      <span className={styles.stars}>⭐⭐⭐⭐⭐</span>
-                    </div>
                     <button 
-                      className={styles.quickAddBtn}
+                      className={styles.quickViewOverlayBtn}
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(product._id);
+                        setQuickViewProduct(product);
                       }}
                     >
-                      Add to Cart
+                      <Eye size={15} /> Quick View
+                    </button>
+                    <span className={styles.badgeTag}>HOT</span>
+                  </div>
+
+                  <div className={styles.productInfo}>
+                    <p className={styles.categoryLabel}>{product.category}</p>
+                    <h3 onClick={() => navigate(`/products/${product._id}`)}>
+                      {product.title}
+                    </h3>
+
+                    <div className={styles.priceRow}>
+                      <span className={styles.price}>₹{product.price}</span>
+                      <span className={styles.originalPrice}>
+                        ₹{Math.floor(product.price * 1.3)}
+                      </span>
+                      <span className={styles.discountPct}>30% OFF</span>
+                    </div>
+
+                    <div className={styles.ratingRow}>
+                      <Star size={14} fill="#f59e0b" color="#f59e0b" />
+                      <span>4.8</span>
+                      <span className={styles.reviewCount}>(42 reviews)</span>
+                    </div>
+
+                    <button 
+                      className={`${styles.quickAddBtn} ${addedItems[product._id] ? styles.addedBtn : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAddToCart(product._id);
+                      }}
+                    >
+                      {addedItems[product._id] ? (
+                        <>
+                          <Check size={16} /> Added!
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag size={16} /> Add to Cart
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -189,6 +252,7 @@ export const Products = () => {
             </div>
           )}
 
+          {/* Pagination */}
           {totalPages > 1 && (
             <div className={styles.pagination}>
               <button
@@ -198,7 +262,7 @@ export const Products = () => {
                 }}
                 disabled={currentPage === 1}
               >
-                &larr; Prev
+                &larr; Previous
               </button>
               <span className={styles.pageIndicator}>
                 Page {currentPage} of {totalPages}
@@ -216,6 +280,14 @@ export const Products = () => {
           )}
         </section>
       </div>
+
+      <RecentlyViewedCarousel />
+
+      <ProductQuickViewModal 
+        product={quickViewProduct}
+        isOpen={Boolean(quickViewProduct)}
+        onClose={() => setQuickViewProduct(null)}
+      />
     </main>
   );
 };
