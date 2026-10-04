@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { X, ShoppingBag, Heart, Star, Check, ExternalLink } from "lucide-react";
+import { X, ShoppingBag, Heart, Star, Check, ExternalLink, Zap } from "lucide-react";
 import { useCart } from "../feature/cart/hooks/useCart";
 import { useWishlist } from "../feature/wishlist/wishlist.context.jsx";
 import styles from "./productQuickView.module.scss";
@@ -100,6 +100,17 @@ export default function ProductQuickViewModal({ product, isOpen, onClose }) {
                     <ShoppingBag size={16} /> Add to Cart
                   </>
                 )}
+              </button>
+
+              <button 
+                className={styles.buyNowModalBtn}
+                onClick={async () => {
+                  await onAddToCart();
+                  navigate("/cart");
+                  onClose();
+                }}
+              >
+                <Zap size={16} /> Buy Now
               </button>
 
               <button 

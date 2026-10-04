@@ -229,23 +229,40 @@ export const Products = () => {
                       <span className={styles.reviewCount}>(42 reviews)</span>
                     </div>
 
-                    <button 
-                      className={`${styles.quickAddBtn} ${addedItems[product._id] ? styles.addedBtn : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onAddToCart(product._id);
-                      }}
-                    >
-                      {addedItems[product._id] ? (
-                        <>
-                          <Check size={16} /> Added!
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingBag size={16} /> Add to Cart
-                        </>
-                      )}
-                    </button>
+                    <div className={styles.cardActions}>
+                      <button 
+                        className={`${styles.quickAddBtn} ${addedItems[product._id] ? styles.addedBtn : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onAddToCart(product._id);
+                        }}
+                      >
+                        {addedItems[product._id] ? (
+                          <>
+                            <Check size={14} /> Added!
+                          </>
+                        ) : (
+                          <>
+                            <ShoppingBag size={14} /> Cart
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        className={styles.buyNowCardBtn}
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (!user) {
+                            navigate("/login", { state: { from: location }, replace: true });
+                            return;
+                          }
+                          await onAddToCart(product._id);
+                          navigate("/cart");
+                        }}
+                      >
+                        <Zap size={14} /> Buy Now
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
