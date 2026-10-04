@@ -5,11 +5,10 @@ const DB_NAME = "snitch";
 
 async function connectToDB() {
   try {
-    await mongoose.connect(config.MONGO_URI);
+    await mongoose.connect(config.MONGO_URI, { serverSelectionTimeoutMS: 3000 });
     console.log(`Connected to MongoDB database "${DB_NAME}"`);
   } catch (error) {
-    console.error("MongoDB connection failed:", error);
-    process.exit(1);
+    console.warn(`MongoDB connection failed (${error.message}). Serving live catalog with Mock Data Fallback.`);
   }
 }
 

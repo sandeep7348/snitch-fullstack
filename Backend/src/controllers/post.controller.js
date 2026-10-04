@@ -196,14 +196,16 @@ export async function getPostByCategory(req, res) {
   try {
     const { category } = req.params;
     const isDbConnected = mongoose.connection && mongoose.connection.readyState === 1;
+    const isAllOrDiscover = !category || category.toLowerCase() === "discover" || category.toLowerCase() === "all";
 
     if (isDbConnected) {
-      const posts = await Post.find({
-        category: new RegExp(category, "i"),
-        stock: { $gte: 1 },
-      }).limit(10);
+      const query = { stock: { $gte: 1 } };
+      if (!isAllOrDiscover) {
+        query.category = new RegExp(category, "i");
+      }
 
-      if (posts.length > 0) {
+      const posts = await Post.find(query).limit(10);
+      if (posts && posts.length > 0) {
         return res.status(200).json({
           message: "All post based on Category",
           totalPosts: posts.length,
@@ -217,9 +219,10 @@ export async function getPostByCategory(req, res) {
     console.warn("DB getPostByCategory error, using mock catalog:", error.message);
   }
 
-  const filteredMock = MOCK_PRODUCTS.filter(
-    (p) => p.category.toLowerCase().includes(req.params.category.toLowerCase())
-  );
+  const isAllOrDiscover = !req.params.category || req.params.category.toLowerCase() === "discover" || req.params.category.toLowerCase() === "all";
+  const filteredMock = isAllOrDiscover 
+    ? MOCK_PRODUCTS 
+    : MOCK_PRODUCTS.filter((p) => p.category.toLowerCase().includes(req.params.category.toLowerCase()));
   const items = filteredMock.length > 0 ? filteredMock : MOCK_PRODUCTS;
 
   return res.status(200).json({
